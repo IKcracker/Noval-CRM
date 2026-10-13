@@ -17,7 +17,7 @@ export async function POST(req:Request){
    WHERE s.tracking_number=${reference} AND lower(q.email)=${email} LIMIT 1`;
   if(!matches.length)return NextResponse.json({error:"No shipment found for those details"},{status:404});
   const s=matches[0];
-  const events=await sql`SELECT status,note,created_at FROM shipment_events WHERE shipment_id=${s.id}::uuid ORDER BY created_at DESC LIMIT 40`;
+  const events=await sql`SELECT status,note,location_label,created_at FROM shipment_events WHERE shipment_id=${s.id}::uuid AND visible_to_customer=true ORDER BY created_at DESC LIMIT 40`;
   return NextResponse.json({trackingNumber:s.tracking_number,status:s.status,origin:s.origin,destination:s.destination,scheduledDeparture:s.scheduled_departure,scheduledArrival:s.scheduled_arrival,events});
  }catch{return NextResponse.json({error:"Tracking information is temporarily unavailable"},{status:503});}
 }
