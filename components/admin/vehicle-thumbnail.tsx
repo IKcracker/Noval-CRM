@@ -8,15 +8,15 @@ export type VehicleType="box-truck"|"semi-truck"|"cargo-van";
 
 const photographs:Record<VehicleType,{src:string;description:string}>={
  "box-truck":{
-  src:"https://images.pexels.com/photos/28158703/pexels-photo-28158703.jpeg?auto=compress&cs=tinysrgb&w=900",
+  src:"/fleet/truck-box.jpg",
   description:"White delivery truck parked on a city street"
  },
  "semi-truck":{
-  src:"https://images.pexels.com/photos/11777628/pexels-photo-11777628.jpeg?auto=compress&cs=tinysrgb&w=900",
+  src:"/fleet/truck-semi.jpg",
   description:"White heavy freight truck parked by a roadside"
  },
  "cargo-van":{
-  src:"https://images.pexels.com/photos/6407433/pexels-photo-6407433.jpeg?auto=compress&cs=tinysrgb&w=900",
+  src:"/fleet/cargo-van.jpg",
   description:"White delivery van with a courier loading packages"
  }
 };
@@ -36,7 +36,6 @@ function VehiclePhoto({src,description}: {src:string;description:string}){
       <Truck className="size-9"/><span className="text-[10px]">Photo unavailable</span>
     </div>
   : <Image src={src} alt={"Representative stock photograph: "+description} fill
-      unoptimized
       sizes="(max-width: 640px) 50vw, (max-width: 1280px) 30vw, 340px"
       className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.025]"
       onError={()=>setFailed(true)}/>;
@@ -47,7 +46,7 @@ export function VehicleThumbnail({className="",type="box-truck",imageSrc}:{
  className?:string;type?:VehicleType;imageSrc?:string|null
 }){
  const photo=photographs[type];
- const custom=imageSrc && (imageSrc.startsWith("/")||imageSrc.startsWith("https://images.pexels.com/"))?imageSrc:null;
+ const custom=imageSrc?.startsWith("/")&&!imageSrc.startsWith("//")?imageSrc:null;
  const src=custom||photo.src;
  return <div className={"relative isolate overflow-hidden rounded-xl border border-border bg-[#f2f5fa] "+className}>
   <VehiclePhoto key={src} src={src} description={custom?"Vehicle":photo.description}/>
