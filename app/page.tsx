@@ -1,110 +1,85 @@
 import Link from "next/link";
 
-const serviceCards = [
-  { index:"01", label:"Freight transport", title:"Road freight, without the guesswork.", detail:"Flexible freight coordination for palletised cargo, commercial goods and planned deliveries.", image:"https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1100&q=85", alt:"Commercial freight truck on a highway" },
-  { index:"02", label:"Priority delivery", title:"When timing matters.", detail:"Request a delivery solution tailored to urgent consignments and time-sensitive collections.", image:"https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?auto=format&fit=crop&w=1100&q=85", alt:"Shipping packages in a logistics warehouse" },
-  { index:"03", label:"Managed transport", title:"One point of contact. Every step.", detail:"Bring collections, dispatch coordination and delivery communication into a clearer process.", image:"https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1100&q=85", alt:"Modern freight warehouse and storage shelves" },
+const freightImage = "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=2200&q=85";
+const warehouseImage = "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1400&q=85";
+const cargoImage = "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?auto=format&fit=crop&w=1400&q=85";
+
+function Brand({light=false}:{light?:boolean}) {
+ return <Link href="/" aria-label="Noval Logistics home" className={`inline-flex items-center gap-3 ${light?"text-white":"text-[#16231e]"}`}>
+  <span className="grid size-10 place-items-center bg-[#fb5b32] text-xl font-black tracking-tighter text-white" style={{clipPath:"polygon(0 0,100% 0,100% 77%,77% 100%,0 100%)"}}>N</span>
+  <span className="flex flex-col leading-none"><span className="text-xl font-black tracking-[-.08em]">NOVAL<span className="text-[#fb5b32]">.</span></span><span className="mt-1.5 text-[9px] font-bold uppercase tracking-[.32em] opacity-60">Logistics</span></span>
+ </Link>
+}
+function Arrow({diagonal=false}:{diagonal?:boolean}){return <span aria-hidden="true" className="text-xl font-light">{diagonal?"↗":"→"}</span>}
+const advantages=[
+ ["01","A single point of contact","Your shipment details and conversations stay connected from request through fulfilment."],
+ ["02","Planning that fits your cargo","Share handling, quantity and delivery requirements before your shipment is scheduled."],
+ ["03","Visibility as it moves","Track shipping milestones through the customer portal as tracking becomes available."]
 ];
+export default function Home(){
+ return <main className="min-h-screen bg-[#f5f4ef] font-sans text-[#18251f] selection:bg-[#fb5b32] selection:text-white">
+  <header className="relative z-20 border-b border-[#e7e5dc] bg-[#f5f4ef]">
+   <div className="mx-auto flex h-[88px] max-w-[1536px] items-center justify-between px-5 sm:px-9 xl:px-16">
+    <Brand/>
+    <nav aria-label="Main navigation" className="hidden items-center gap-9 lg:flex">
+     <a className="text-[13px] font-semibold hover:text-[#e74f2d]" href="#solutions">Solutions</a>
+     <a className="text-[13px] font-semibold hover:text-[#e74f2d]" href="#advantage">Why Noval</a>
+     <a className="text-[13px] font-semibold hover:text-[#e74f2d]" href="#process">How it works</a>
+     <Link className="text-[13px] font-semibold hover:text-[#e74f2d]" href="/track">Track a shipment</Link>
+    </nav>
+    <Link href="/quote" className="hidden items-center gap-5 bg-[#18251f] px-6 py-4 text-xs font-extrabold uppercase tracking-[.13em] text-white transition hover:bg-[#fb5b32] sm:inline-flex">Get a freight quote <Arrow diagonal/></Link>
+    <details className="group relative sm:hidden">
+     <summary className="cursor-pointer list-none border border-[#cccfc6] px-4 py-3 text-xs font-bold uppercase tracking-widest">Menu +</summary>
+     <nav aria-label="Mobile navigation" className="absolute right-0 top-14 z-50 grid w-60 gap-1 border border-[#e7e5dc] bg-[#f5f4ef] p-3 shadow-2xl">
+      <a href="#solutions" className="p-3 text-sm">Solutions</a><a href="#advantage" className="p-3 text-sm">Why Noval</a><a href="#process" className="p-3 text-sm">How it works</a><Link href="/track" className="p-3 text-sm">Track shipment</Link><Link href="/quote" className="bg-[#fb5b32] p-3 text-sm font-bold text-white">Get a quote ↗</Link>
+     </nav>
+    </details>
+   </div>
+  </header>
 
-const steps = [
-  { n:"01", title:"Share your shipment", text:"Tell us what you are moving, where it starts and where it needs to go." },
-  { n:"02", title:"Receive a tailored quotation", text:"We review the details and follow up with a proposed transport solution." },
-  { n:"03", title:"Confirm the movement", text:"Once the quote is accepted, your shipment can be planned for dispatch." },
-  { n:"04", title:"Stay informed", text:"Follow shipment updates as the tracking platform is brought online." },
-];
+  <section className="relative isolate min-h-[760px] overflow-hidden bg-[#18251f] lg:min-h-[790px]">
+   <div className="absolute inset-0 bg-cover bg-[center_45%] lg:left-[31%]" style={{backgroundImage:`url("${freightImage}")`}}/>
+   <div className="absolute inset-0 bg-gradient-to-r from-[#15251f] via-[#15251f]/90 to-[#15251f]/20 lg:via-[#15251f]/85"/>
+   <div className="absolute inset-0 bg-gradient-to-t from-[#14251f]/95 via-transparent to-transparent"/>
+   <div className="relative mx-auto flex min-h-[760px] max-w-[1536px] flex-col justify-between px-6 py-16 sm:px-9 lg:min-h-[790px] lg:py-20 xl:px-16">
+    <div className="max-w-[920px]">
+     <div className="mb-9 flex items-center gap-4"><span className="h-[2px] w-11 bg-[#fb5b32]"/><span className="text-xs font-bold uppercase tracking-[.25em] text-white/80">Freight. Forward thinking.</span></div>
+     <h1 className="text-[clamp(4.15rem,8.8vw,10rem)] font-black leading-[.88] tracking-[-.083em] text-white">MOVE<br/>WITH <span className="text-[#fb5b32]">PURPOSE.</span></h1>
+     <div className="mt-10 max-w-[630px] border-l-[3px] border-[#fb5b32] pl-6"><p className="text-lg leading-8 text-white/80 md:text-[21px]">Freight solutions made for the people and businesses that keep South Africa moving. Plan it, book it, and stay informed through every step.</p></div>
+     <div className="mt-10 flex flex-wrap gap-3">
+      <Link href="/quote" className="inline-flex min-h-14 items-center justify-between gap-12 bg-[#fb5b32] px-7 py-4 text-sm font-extrabold text-white transition hover:bg-[#f47a58]">Request a quote <Arrow diagonal/></Link>
+      <Link href="/track" className="inline-flex min-h-14 items-center justify-between gap-12 border border-white/40 px-7 py-4 text-sm font-bold text-white transition hover:bg-white/10">Track a shipment <Arrow/></Link>
+     </div>
+    </div>
+    <div className="mt-16 flex flex-wrap items-center gap-x-10 gap-y-5 border-t border-white/25 pt-6"><span className="text-xs font-extrabold uppercase tracking-[.2em] text-white/50">Transport solutions</span>{["ROAD FREIGHT","DEDICATED TRIPS","EXPRESS DELIVERY"].map(s=><span key={s} className="text-xs font-bold tracking-[.12em] text-white">{s}</span>)}</div>
+   </div>
+   <div className="absolute bottom-0 right-0 hidden bg-[#fb5b32] px-8 py-7 text-white xl:block"><div className="text-[10px] font-bold uppercase tracking-widest">Ready to ship?</div><Link href="/quote" className="mt-2 flex items-center gap-8 text-lg font-extrabold">Let's get moving <Arrow diagonal/></Link></div>
+  </section>
 
-export default function Home() {
-  return (
-    <main className="overflow-hidden bg-[#f8f9f7] text-[#172827]">
-      <div className="bg-[#102f35] px-5 py-2.5 text-center text-[11px] font-semibold tracking-[0.12em] text-white/80 sm:text-xs">
-        SHIPPING SOLUTIONS FOR BUSINESSES ACROSS SOUTH AFRICA
-      </div>
-      <header className="relative z-20 border-b border-[#e5e9e4] bg-white">
-        <div className="mx-auto flex h-[82px] max-w-[1440px] items-center justify-between gap-6 px-5 sm:px-8 xl:px-14">
-          <Link href="/" aria-label="Noval Logistics home" className="flex shrink-0 items-center gap-3">
-            <span className="grid h-11 w-11 place-items-center rounded-[11px] bg-[#123c43] text-xl font-black text-[#d5f273]">N<span className="-ml-1 text-white">.</span></span>
-            <span className="flex flex-col leading-none"><span className="text-[21px] font-black tracking-[-0.055em]">NOVAL</span><span className="mt-1 text-[9px] font-bold tracking-[0.28em] text-[#627474]">LOGISTICS</span></span>
-          </Link>
-          <nav aria-label="Main navigation" className="hidden items-center gap-8 lg:flex">
-            <a href="#services" className="text-[13px] font-semibold text-[#445756] transition hover:text-[#008b79]">Our services</a>
-            <a href="#why-noval" className="text-[13px] font-semibold text-[#445756] transition hover:text-[#008b79]">Why Noval</a>
-            <a href="#how-it-works" className="text-[13px] font-semibold text-[#445756] transition hover:text-[#008b79]">How it works</a>
-            <Link href="/track" className="text-[13px] font-semibold text-[#445756] transition hover:text-[#008b79]">Track shipment</Link>
-          </nav>
-          <div className="hidden items-center gap-5 sm:flex">
-            <Link href="/track" className="text-[13px] font-semibold text-[#123c43] lg:hidden">Track shipment</Link>
-            <Link href="/quote" className="rounded-full bg-[#d5f273] px-6 py-3.5 text-[13px] font-extrabold text-[#123c43] transition hover:bg-[#c8e968]">Get a quote <span aria-hidden="true" className="ml-2">↗</span></Link>
-          </div>
-          <details className="group relative sm:hidden">
-            <summary className="cursor-pointer list-none rounded-lg border border-[#dfe7e2] px-3 py-2 text-sm font-bold">Menu ☰</summary>
-            <nav aria-label="Mobile navigation" className="absolute right-0 top-12 z-30 grid w-56 gap-1 rounded-2xl border border-[#e5e9e4] bg-white p-3 shadow-xl">
-              <a href="#services" className="rounded-lg px-3 py-3 text-sm">Services</a>
-              <a href="#why-noval" className="rounded-lg px-3 py-3 text-sm">Why Noval</a>
-              <a href="#how-it-works" className="rounded-lg px-3 py-3 text-sm">How it works</a>
-              <Link href="/track" className="rounded-lg px-3 py-3 text-sm">Track shipment</Link>
-              <Link href="/quote" className="rounded-lg bg-[#d5f273] px-3 py-3 text-sm font-bold">Request quote ↗</Link>
-            </nav>
-          </details>
-        </div>
-      </header>
+  <section className="border-b border-[#ddded6] bg-white">
+   <div className="mx-auto grid max-w-[1536px] lg:grid-cols-[1fr_1fr]">
+    <div className="flex flex-col justify-center px-6 py-16 sm:px-9 lg:py-24 xl:pl-16 xl:pr-24"><div className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-[.2em] text-[#f05a35]"><span className="h-px w-10 bg-[#f05a35]"/>Built for real-world logistics</div><h2 className="mt-7 max-w-[650px] text-[clamp(2.8rem,4.9vw,5.8rem)] font-black leading-[.97] tracking-[-.073em]">Every shipment<br/>has a <span className="text-[#ed5938]">destination.</span><br/>We help get it there.</h2><p className="mt-7 max-w-[530px] text-base leading-8 text-[#68736d]">From a single delivery to more complex transport needs, Noval helps coordinate the journey. Share your requirements and get a solution shaped around your cargo, timing and route.</p><Link href="/quote" className="mt-9 inline-flex w-fit items-center gap-7 border-b-2 border-[#18251f] pb-3 text-sm font-extrabold">Tell us what you're moving <Arrow diagonal/></Link></div>
+    <div className="relative min-h-[400px] bg-cover bg-center lg:min-h-[620px]" style={{backgroundImage:`url("${warehouseImage}")`}}><span className="absolute bottom-7 left-7 bg-[#f5f4ef] px-5 py-3 text-[11px] font-extrabold uppercase tracking-[.16em] text-[#18251f]">Commercial logistics / South Africa</span></div>
+   </div>
+  </section>
 
-      <section className="relative min-h-[650px] bg-[#102f35] lg:min-h-[720px]">
-        <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage:"url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=2400&q=90')"}} aria-hidden="true"/>
-        <div className="absolute inset-0 bg-gradient-to-r from-[#102f35]/95 via-[#102f35]/83 to-[#102f35]/30" aria-hidden="true"/>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#102f35]/70 via-transparent to-transparent" aria-hidden="true"/>
-        <div className="relative mx-auto flex min-h-[650px] max-w-[1440px] flex-col justify-center px-6 py-20 sm:px-8 lg:min-h-[720px] xl:px-14">
-          <div className="max-w-[780px]">
-            <div className="mb-8 flex items-center gap-3"><span className="h-[2px] w-10 bg-[#d5f273]"/><span className="text-[11px] font-bold uppercase tracking-[.25em] text-[#d5f273]">Moving what matters</span></div>
-            <h1 className="max-w-[780px] text-[clamp(3.3rem,7vw,7rem)] font-extrabold leading-[0.98] tracking-[-0.065em] text-white">Logistics that<br/><span className="text-[#d5f273]">move you</span><br/>forward.</h1>
-            <p className="mt-8 max-w-[550px] text-base leading-8 text-[#e2e9e8] sm:text-lg">From the first collection to the final handover, get the shipping support your business needs to keep moving.</p>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <Link href="/quote" className="inline-flex items-center justify-center rounded-full bg-[#d5f273] px-7 py-4 text-sm font-extrabold text-[#123c43] transition hover:bg-white">Request a shipping quote <span className="ml-5 text-lg" aria-hidden="true">↗</span></Link>
-              <a href="#services" className="inline-flex items-center justify-center rounded-full border border-white/50 px-7 py-4 text-sm font-semibold text-white transition hover:bg-white/10">Explore our services <span className="ml-5" aria-hidden="true">↓</span></a>
-            </div>
-          </div>
-          <div className="mt-16 flex flex-wrap items-center gap-x-10 gap-y-4 border-t border-white/25 pt-7 text-xs font-semibold uppercase tracking-[.13em] text-white/75">
-            <span>Road freight</span><span>Dedicated transport</span><span>Courier solutions</span><span>Delivery coordination</span>
-          </div>
-        </div>
-        <div className="absolute bottom-0 right-0 hidden bg-[#d5f273] px-9 py-6 text-[#123c43] xl:block"><p className="text-[11px] font-bold uppercase tracking-[.18em]">Have something to move?</p><Link href="/quote" className="mt-2 block text-xl font-extrabold tracking-tight">Let's get it there ↗</Link></div>
-      </section>
+  <section id="solutions" className="mx-auto max-w-[1536px] px-6 py-24 sm:px-9 lg:py-32 xl:px-16">
+   <div className="flex flex-wrap items-end justify-between gap-8"><div><div className="text-xs font-extrabold uppercase tracking-[.2em] text-[#ed5938]">Our capabilities — 01 / 03</div><h2 className="mt-5 text-[clamp(3rem,5vw,5.8rem)] font-black leading-[.95] tracking-[-.075em]">WHAT WE <span className="text-[#ed5938]">MOVE.</span></h2></div><p className="max-w-[400px] text-base leading-7 text-[#64726b]">Shipping requirements differ. Our services are designed to start with what your business actually needs.</p></div>
+   <div className="mt-14 grid gap-4 lg:grid-cols-[1.3fr_1fr_1fr]">
+    <article className="group relative flex min-h-[530px] flex-col justify-between overflow-hidden bg-[#18251f] p-8 text-white sm:p-10"><div className="absolute inset-0 bg-cover bg-center opacity-55 transition duration-500 group-hover:scale-105" style={{backgroundImage:`url("${freightImage}")`}}/><div className="absolute inset-0 bg-gradient-to-t from-[#12261f] via-[#12261f]/35 to-[#12261f]/45"/><div className="relative flex justify-between"><span className="text-xs font-bold tracking-[.2em]">01 / ROAD FREIGHT</span><span className="text-2xl">↗</span></div><div className="relative"><h3 className="max-w-[390px] text-4xl font-black leading-[1.02] tracking-[-.055em] sm:text-5xl">FREIGHT THAT GOES THE DISTANCE.</h3><p className="mt-5 max-w-sm text-sm leading-7 text-white/75">Commercial road transport planned around your loads, collection points and delivery requirements.</p><Link href="/quote" className="mt-7 inline-flex items-center gap-8 border-b border-white pb-2 text-sm font-bold">Enquire now <Arrow diagonal/></Link></div></article>
+    <article className="group flex min-h-[530px] flex-col justify-between overflow-hidden bg-[#e3e6dd] p-8 sm:p-10"><div className="flex items-center justify-between"><span className="text-xs font-bold tracking-[.16em]">02 / DEDICATED TRANSPORT</span><span className="text-2xl">↗</span></div><div><div className="mb-9 h-40 bg-cover bg-center" style={{backgroundImage:`url("${cargoImage}")`}}/><h3 className="text-3xl font-black leading-[1.07] tracking-[-.05em]">YOUR LOAD.<br/>YOUR PLAN.</h3><p className="mt-5 text-sm leading-7 text-[#68736d]">Dedicated transport planning for shipments that need focused coordination.</p><Link href="/quote" className="mt-7 inline-flex items-center gap-6 border-b border-[#18251f] pb-2 text-sm font-bold">Enquire now <Arrow diagonal/></Link></div></article>
+    <article className="group flex min-h-[530px] flex-col justify-between bg-[#fb5b32] p-8 text-white sm:p-10"><div className="flex items-center justify-between"><span className="text-xs font-bold tracking-[.16em]">03 / EXPRESS DELIVERY</span><span className="text-2xl">↗</span></div><div><span aria-hidden="true" className="block text-[112px] font-black leading-none tracking-[-.1em] opacity-25">→→</span><h3 className="mt-7 text-3xl font-black leading-[1.07] tracking-[-.05em]">WHEN TIME IS EVERYTHING.</h3><p className="mt-5 text-sm leading-7 text-white/85">Have an urgent delivery? Let our team assess the route, schedule and service options.</p><Link href="/quote" className="mt-7 inline-flex items-center gap-6 border-b border-white pb-2 text-sm font-bold">Enquire now <Arrow diagonal/></Link></div></article>
+   </div>
+  </section>
 
-      <section id="services" className="mx-auto max-w-[1440px] px-6 py-24 sm:px-8 lg:py-32 xl:px-14">
-        <div className="grid items-end gap-8 lg:grid-cols-[1fr_0.7fr]">
-          <div><p className="text-xs font-extrabold uppercase tracking-[.23em] text-[#008b79]">What we do</p><h2 className="mt-5 max-w-[700px] text-[clamp(2.5rem,4vw,4.7rem)] font-extrabold leading-[1.08] tracking-[-.06em]">Your cargo. <span className="text-[#758e8a]">Our commitment.</span></h2></div>
-          <p className="max-w-[410px] text-base leading-8 text-[#667572] lg:ml-auto">Every shipment brings its own challenges. We help you find a practical freight solution, with clear communication from inquiry to delivery.</p>
-        </div>
-        <div className="mt-14 grid gap-5 md:grid-cols-3">
-          {serviceCards.map((service)=><article key={service.index} className="group overflow-hidden rounded-[22px] border border-[#e7ebe6] bg-white transition hover:-translate-y-1 hover:shadow-xl">
-            <div className="relative h-[250px] overflow-hidden bg-[#dbe5e2] sm:h-[300px]"><div className="h-full w-full bg-cover bg-center transition duration-500 group-hover:scale-105" style={{backgroundImage:`url("${service.image}")`}} role="img" aria-label={service.alt}/><span className="absolute left-6 top-6 rounded-full bg-white/95 px-4 py-2 text-[11px] font-bold uppercase tracking-[.13em] text-[#123c43]">{service.label}</span></div>
-            <div className="p-7"><div className="flex items-center justify-between"><span className="text-xs font-bold text-[#8b9c96]">{service.index} / 03</span><span className="text-2xl text-[#008b79]" aria-hidden="true">↗</span></div><h3 className="mt-7 max-w-xs text-[26px] font-extrabold leading-tight tracking-[-.04em]">{service.title}</h3><p className="mt-4 min-h-24 text-sm leading-7 text-[#667572]">{service.detail}</p><Link href="/quote" className="inline-block border-b border-[#123c43] pb-1 text-sm font-bold text-[#123c43]">Request this service ↗</Link></div>
-          </article>)}
-        </div>
-      </section>
+  <section id="advantage" className="bg-[#18251f] px-6 py-24 text-white sm:px-9 lg:py-32 xl:px-16">
+   <div className="mx-auto max-w-[1408px]"><div className="grid gap-10 lg:grid-cols-[1.1fr_.9fr]"><div><div className="text-xs font-bold uppercase tracking-[.2em] text-[#fb7757]">A smarter approach to shipping</div><h2 className="mt-6 text-[clamp(3.2rem,6.3vw,7.8rem)] font-black leading-[.91] tracking-[-.08em]">LESS BACK<br/>AND FORTH.<br/><span className="text-[#fb5b32]">MORE FORWARD.</span></h2></div><div className="flex items-end"><p className="max-w-md text-lg leading-8 text-white/60">A more connected freight experience starts with clear requests, considered planning and updates that matter. We're building Noval around those fundamentals.</p></div></div><div className="mt-20 grid gap-8 border-t border-white/20 pt-10 md:grid-cols-3">{advantages.map(([n,title,desc])=><div key={n}><span className="text-sm font-bold text-[#fb7757]">{n} /</span><h3 className="mt-7 max-w-[300px] text-2xl font-extrabold tracking-[-.04em]">{title}</h3><p className="mt-4 max-w-sm text-sm leading-7 text-white/55">{desc}</p></div>)}</div></div>
+  </section>
 
-      <section id="why-noval" className="bg-[#eaf0ec]">
-        <div className="mx-auto grid max-w-[1440px] lg:grid-cols-2">
-          <div className="min-h-[390px] bg-cover bg-center lg:min-h-[620px]" style={{backgroundImage:"url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1400&q=85')"}} role="img" aria-label="Logistics distribution centre"/>
-          <div className="flex flex-col justify-center px-7 py-20 sm:px-12 lg:px-16 xl:px-20">
-            <p className="text-xs font-extrabold uppercase tracking-[.23em] text-[#008b79]">A better way to ship</p>
-            <h2 className="mt-5 max-w-[560px] text-[clamp(2.5rem,4vw,4.6rem)] font-extrabold leading-[1.07] tracking-[-.06em]">More clarity.<br/>Less complexity.</h2>
-            <p className="mt-7 max-w-[520px] leading-8 text-[#657671]">You have a business to run. Shipping should not mean chasing updates or repeating the same details. We are building a connected process between your quote request and delivery coordination.</p>
-            <div className="mt-10 space-y-6">
-              {[["01","A straightforward quote process","Share shipment information once, so our team can assess your requirements."],["02","Coordinated freight planning","Confirm the details that matter before your shipment is scheduled."],["03","A clear path to delivery","Track key milestones as our customer tracking service becomes available."]].map(([n,title,desc])=><div key={n} className="flex gap-5 border-t border-[#cbd8d1] pt-5"><span className="pt-1 text-xs font-extrabold text-[#008b79]">{n}</span><div><h3 className="font-extrabold">{title}</h3><p className="mt-2 text-sm leading-6 text-[#657671]">{desc}</p></div></div>)}
-            </div>
-          </div>
-        </div>
-      </section>
+  <section id="process" className="mx-auto max-w-[1536px] px-6 py-24 sm:px-9 lg:py-32 xl:px-16"><div className="grid gap-14 lg:grid-cols-[.75fr_1.25fr]"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#ed5938]">The process</p><h2 className="mt-6 text-[clamp(3rem,4.8vw,5.7rem)] font-black leading-[.98] tracking-[-.07em]">FROM<br/>ENQUIRY<br/><span className="text-[#ed5938]">TO ARRIVAL.</span></h2><p className="mt-7 max-w-sm text-base leading-8 text-[#68736d]">Four straightforward stages make it easier to move from an initial request towards a completed shipment.</p></div><div className="divide-y divide-[#d6dbd2] border-t border-[#d6dbd2]">{[["01","Request a quote","Tell us the origin, destination, cargo and preferred timing."],["02","Review and confirm","Our team evaluates your requirements and follows up with a quotation."],["03","Plan the movement","Once agreed, the booking can progress into scheduling and dispatch."],["04","Follow delivery progress","Receive shipment milestones as tracking capabilities are brought online."]].map(([n,title,desc])=><div key={n} className="grid gap-4 py-7 sm:grid-cols-[65px_1fr_1.15fr] sm:items-start"><span className="text-lg font-black text-[#ed5938]">{n}</span><h3 className="text-xl font-black tracking-[-.04em]">{title}</h3><p className="text-sm leading-7 text-[#68736d]">{desc}</p></div>)}</div></div></section>
 
-      <section id="how-it-works" className="mx-auto max-w-[1440px] px-6 py-24 sm:px-8 lg:py-32 xl:px-14">
-        <div className="flex flex-wrap items-end justify-between gap-6"><div><p className="text-xs font-extrabold uppercase tracking-[.23em] text-[#008b79]">The process</p><h2 className="mt-5 text-[clamp(2.5rem,4vw,4.7rem)] font-extrabold tracking-[-.06em]">Shipping, simplified.</h2></div><Link href="/quote" className="rounded-full border border-[#c7d1ca] px-6 py-3 text-sm font-extrabold text-[#123c43] transition hover:bg-[#eaf0ec]">Start a quote ↗</Link></div>
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{steps.map(step=><div key={step.n} className="border-t-2 border-[#153d42] pt-6"><span className="text-5xl font-extrabold tracking-[-.06em] text-[#c3d4cb]">{step.n}</span><h3 className="mt-8 text-xl font-extrabold tracking-tight">{step.title}</h3><p className="mt-4 text-sm leading-7 text-[#667572]">{step.text}</p></div>)}</div>
-      </section>
+  <section className="bg-[#fb5b32] px-6 py-20 text-white sm:px-9 lg:py-28 xl:px-16"><div className="mx-auto flex max-w-[1408px] flex-wrap items-end justify-between gap-12"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-white/80">Let's get to work</p><h2 className="mt-6 text-[clamp(3.5rem,7.5vw,9rem)] font-black leading-[.9] tracking-[-.08em]">GOT CARGO?<br/>LET'S <span className="text-[#18251f]">MOVE.</span></h2></div><Link href="/quote" className="inline-flex items-center gap-14 bg-[#18251f] px-8 py-5 text-sm font-extrabold text-white transition hover:bg-[#314840]">Start your quote <Arrow diagonal/></Link></div></section>
 
-      <section className="mx-4 mb-5 rounded-[26px] bg-[#123c43] px-7 py-20 text-white sm:mx-8 lg:rounded-[32px] lg:py-24">
-        <div className="mx-auto flex max-w-[1250px] flex-wrap items-center justify-between gap-10"><div><p className="text-xs font-extrabold uppercase tracking-[.23em] text-[#d5f273]">Let's move forward</p><h2 className="mt-5 max-w-[700px] text-[clamp(2.8rem,5vw,5.8rem)] font-extrabold leading-[1.04] tracking-[-.06em]">Your next shipment starts here.</h2><p className="mt-5 max-w-md text-base leading-7 text-white/65">Tell us what you need transported and we'll review your request.</p></div><Link href="/quote" className="shrink-0 rounded-full bg-[#d5f273] px-8 py-5 text-sm font-extrabold text-[#123c43] transition hover:bg-white">Request a quote <span className="ml-6" aria-hidden="true">↗</span></Link></div>
-      </section>
-      <footer className="bg-[#f8f9f7] px-6 py-14 sm:px-8 xl:px-14"><div className="mx-auto max-w-[1340px]"><div className="flex flex-wrap justify-between gap-12 border-b border-[#d8e0d9] pb-12"><div><p className="text-2xl font-black tracking-[-.06em]">NOVAL <span className="font-medium">LOGISTICS</span></p><p className="mt-4 max-w-xs text-sm leading-7 text-[#667572]">Practical shipping solutions and clear communication from inquiry to delivery.</p></div><div className="flex flex-wrap gap-x-14 gap-y-7 text-sm font-semibold"><div className="grid gap-4"><a href="#services">Our services</a><a href="#how-it-works">How it works</a><a href="#why-noval">Why Noval</a></div><div className="grid gap-4"><Link href="/quote">Request a quote</Link><Link href="/track">Track shipment</Link></div></div></div><div className="flex flex-wrap justify-between gap-4 pt-7 text-xs text-[#87958d]"><span>© {new Date().getFullYear()} Noval Logistics. All rights reserved.</span><span>South Africa · Road freight and delivery coordination</span></div></div></footer>
-    </main>
-  );
+  <footer className="bg-[#14231d] px-6 py-14 text-white sm:px-9 xl:px-16"><div className="mx-auto max-w-[1408px]"><div className="grid gap-12 border-b border-white/15 pb-16 lg:grid-cols-[1.4fr_1fr_1fr]"><div><Brand light/><p className="mt-7 max-w-xs text-sm leading-7 text-white/55">Practical freight solutions, clear communication, and better connected shipping.</p></div><div><p className="mb-6 text-xs font-bold uppercase tracking-[.19em] text-[#fb7757]">Explore</p><div className="grid gap-4 text-sm text-white/70"><a href="#solutions">Our solutions</a><a href="#advantage">Why Noval</a><a href="#process">How it works</a></div></div><div><p className="mb-6 text-xs font-bold uppercase tracking-[.19em] text-[#fb7757]">Your shipment</p><div className="grid gap-4 text-sm text-white/70"><Link href="/quote">Request a quote</Link><Link href="/track">Track shipment</Link></div></div></div><div className="flex flex-wrap justify-between gap-5 pt-7 text-xs text-white/45"><span>© 2026 Noval Logistics. All rights reserved.</span><span>Freight and delivery coordination · South Africa</span></div></div></footer>
+ </main>
 }
