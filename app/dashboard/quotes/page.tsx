@@ -3,7 +3,6 @@ import {db} from "@/lib/db";
 import {isAdmin} from "@/lib/admin-auth";
 import {Card} from "@/components/ui/card";
 import {QuoteStatus} from "./quote-status";
-export const dynamic="force-dynamic";
 type Item={id:string;reference:string;contact_name:string;company:string|null;email:string;phone:string;origin:string;destination:string;status:string;service_type:string;created_at:Date};
 export default async function QuotesPage(){
  if(!await isAdmin())redirect("/admin/login");
