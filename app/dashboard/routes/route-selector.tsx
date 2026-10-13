@@ -1,7 +1,8 @@
 "use client";
-import {useMemo,useState} from "react";
+import {useMemo,useState,useEffect} from "react";
 import Link from "next/link";
-import {ArrowUpRight,CalendarDays,MapPin,Search,Truck} from "lucide-react";
+import {RouteRoadMap} from "@/components/admin/route-road-map";
+import {ArrowUpRight,CalendarDays,MapPin,Search,Truck,Route} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card,CardHeader,CardTitle,CardDescription,CardContent} from "@/components/ui/card";
@@ -23,6 +24,23 @@ function cityPoint(input:string):[number,number]|null{
 }
 export function RouteSelector({routes}:{routes:Journey[]}){
  const [id,setId]=useState(routes[0].id),[filter,setFilter]=useState("");
+ const [route,setRoute]=useState<null|{origin:{lat:number;lon:number;label:string};destination:{lat:number;lon:number;label:string};geometry:number[][];distanceKm:number;durationMinutes:number}>(null);
+ const [error,setError]=useState(""),[loading,setLoading]=useState(false);
+ useEffect(()=>{
+  let active=true;
+  async function calculate(){
+   setLoading(true);setRoute(null);setError("");
+   const item=routes.find(r=>r.id===id)??routes[0];
+   try{
+    const response=await fetch("/api/admin/routing",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({origin:item.origin,destination:item.destination})});
+    const result=await response.json();
+    if(!response.ok)throw new Error(result.error||"Unable to calculate driving route");
+    if(active)setRoute(result);
+   }catch(e){if(active)setError(e instanceof Error?e.message:"Road route unavailable");}
+   finally{if(active)setLoading(false);}
+  }
+  void calculate();return ()=>{active=false;};
+ },[id,routes]);
  const filtered=useMemo(()=>routes.filter(r=>[r.reference,r.origin,r.destination,r.driver_name,r.vehicle_registration,r.customer].some(v=>v.toLowerCase().includes(filter.trim().toLowerCase()))),[routes,filter]);
  const selected=routes.find(r=>r.id===id)??routes[0];
  const origin=cityPoint(selected.origin),destination=cityPoint(selected.destination);
@@ -39,7 +57,11 @@ export function RouteSelector({routes}:{routes:Journey[]}){
   <Card className="min-w-0 overflow-hidden"><CardHeader><CardTitle>Trip register</CardTitle><CardDescription>Choose a scheduled movement to inspect</CardDescription><div className="relative mt-3"><Search className="pointer-events-none absolute left-3 top-3 size-4 text-muted-foreground"/><Input className="pl-9" value={filter} onChange={e=>setFilter(e.target.value)} placeholder="Find trip, route, driver..."/></div></CardHeader>
    <CardContent className="max-h-[620px] space-y-2 overflow-y-auto">{filtered.length===0?<p className="py-8 text-center text-sm text-muted-foreground">No trips match your search.</p>:filtered.map(r=><button type="button" key={r.id} onClick={()=>setId(r.id)} className={`w-full rounded-xl border p-4 text-left transition hover:border-primary/30 ${selected.id===r.id?"border-primary bg-secondary/70":"border-border bg-background"}`}><div className="flex items-center justify-between gap-2"><span className="text-sm font-bold">{r.reference}</span><Badge variant={selected.id===r.id?"default":"outline"}>{r.status.replaceAll("_"," ")}</Badge></div><p className="mt-3 text-sm font-semibold">{r.origin} → {r.destination}</p><p className="mt-2 text-xs text-muted-foreground">{r.customer} · {r.vehicle_registration}</p></button>)}</CardContent>
   </Card>
-  <div className="min-w-0 space-y-5"><Card className="overflow-hidden"><CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3"><div><CardTitle>{selected.origin} → {selected.destination}</CardTitle><CardDescription>{selected.reference} · OpenStreetMap · approximate city locations</CardDescription></div><Button size="sm" variant="outline" render={<a href={directions} target="_blank" rel="noopener noreferrer"/>}>Plan driving route <ArrowUpRight className="size-4"/></Button></CardHeader><CardContent>{embed?<iframe title={"OpenStreetMap overview for "+selected.reference} key={selected.id} src={embed} className="h-[400px] w-full rounded-xl border border-border md:h-[490px]" referrerPolicy="strict-origin-when-cross-origin" loading="lazy" allowFullScreen/>:<div className="flex h-[400px] flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-border bg-muted/40 px-8 text-center"><MapPin className="size-9 text-muted-foreground"/><h2 className="text-lg font-semibold">Map location not available</h2><p className="max-w-md text-sm text-muted-foreground">The origin or destination is not among the supported city names. Open OpenStreetMap to search for the exact addresses.</p><Button variant="outline" render={<a href={directions} target="_blank" rel="noopener noreferrer"/>}>Open OpenStreetMap directions <ArrowUpRight className="size-4"/></Button></div>}<p className="mt-3 text-xs text-muted-foreground">Map shows approximate city locations, not the actual driving path or a live driver position. Use “Plan driving route” for detailed road directions.</p></CardContent></Card>
+  <div className="min-w-0 space-y-5"><Card className="overflow-hidden"><CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3"><div><CardTitle>{selected.origin} → {selected.destination}</CardTitle><CardDescription>{selected.reference} · Calculated road directions</CardDescription></div><Button size="sm" variant="outline" render={<a href={directions} target="_blank" rel="noopener noreferrer"/>}>Plan driving route <ArrowUpRight className="size-4"/></Button></CardHeader><CardContent>
+  {loading?<div className="grid h-[420px] place-items-center rounded-xl bg-muted/50 text-sm text-muted-foreground">Calculating road route and travel estimate...</div>:
+  route?<><RouteRoadMap geometry={route.geometry} origin={route.origin} destination={route.destination}/><div className="mt-3 flex flex-wrap gap-2"><Badge variant="secondary"><Route className="size-3"/> {route.distanceKm} km by road</Badge><Badge variant="outline">Approx. {Math.round(route.durationMinutes/60*10)/10} hours driving</Badge></div><p className="mt-3 text-xs text-muted-foreground">Calculated road directions only; not live vehicle GPS or a promised ETA.</p></>:
+  <div className="grid h-[420px] place-items-center gap-3 rounded-xl bg-muted/50 px-6 text-center"><div><MapPin className="mx-auto mb-3 size-7 text-muted-foreground"/><p className="font-medium">Road route unavailable</p><p className="mt-2 max-w-sm text-sm text-muted-foreground">{error||"No route found."}</p><p className="mt-2 text-xs text-muted-foreground">Configure OPENROUTESERVICE_API_KEY or verify the collection/delivery addresses.</p></div></div>}
+  </CardContent></Card>
    <Card><CardHeader><CardTitle>Dispatch details</CardTitle></CardHeader><CardContent className="grid gap-5 sm:grid-cols-2"><div><p className="text-xs uppercase tracking-wide text-muted-foreground">Driver</p><p className="mt-1 font-semibold">{selected.driver_name}</p></div><div><p className="text-xs uppercase tracking-wide text-muted-foreground">Vehicle</p><p className="mt-1 font-semibold">{selected.vehicle_registration}</p></div><div><p className="flex items-center gap-1 text-xs uppercase tracking-wide text-muted-foreground"><CalendarDays className="size-3"/> Scheduled departure</p><p className="mt-1 font-semibold">{new Date(selected.scheduled_departure).toLocaleString("en-ZA")}</p></div><div><p className="text-xs uppercase tracking-wide text-muted-foreground">Scheduled arrival</p><p className="mt-1 font-semibold">{new Date(selected.scheduled_arrival).toLocaleString("en-ZA")}</p></div><div className="sm:col-span-2"><Button variant="outline" render={<Link href={"/dashboard/bookings/"+selected.booking_id}/>}>Open booking <Truck className="size-4"/></Button></div></CardContent></Card>
   </div>
  </div>;
