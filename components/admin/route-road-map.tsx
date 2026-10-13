@@ -13,9 +13,9 @@ export function RouteRoadMap({geometry,origin,destination}:Props){
     attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     maxZoom:18
    }).addTo(mapInstance);
-   const route=L.polyline(geometry.map(c=>[c[0],c[1]] as [number,number]),{color:"#e96843",weight:5,opacity:.9}).addTo(mapInstance);
-   L.circleMarker([origin.lat,origin.lon],{radius:8,color:"#184536",fillColor:"#184536",fillOpacity:1}).addTo(mapInstance).bindPopup("Collection: "+origin.label);
-   L.circleMarker([destination.lat,destination.lon],{radius:8,color:"#e96843",fillColor:"#e96843",fillOpacity:1}).addTo(mapInstance).bindPopup("Delivery: "+destination.label);
+   const route=L.polyline(geometry.map(c=>[c[0],c[1]] as [number,number]),{color:"#2563eb",weight:5,opacity:.9}).addTo(mapInstance);
+   L.circleMarker([origin.lat,origin.lon],{radius:8,color:"#119f88",fillColor:"#119f88",fillOpacity:1}).addTo(mapInstance).bindPopup("Collection: "+origin.label);
+   L.circleMarker([destination.lat,destination.lon],{radius:8,color:"#2563eb",fillColor:"#2563eb",fillOpacity:1}).addTo(mapInstance).bindPopup("Delivery: "+destination.label);
    mapInstance.fitBounds(route.getBounds(),{padding:[34,34]});
   });
   return ()=>{cancelled=true;mapInstance?.remove();};
