@@ -6,9 +6,9 @@ import {LogoutButton} from "@/components/admin/logout-button";
 import {Badge} from "@/components/ui/badge";
 import {Sidebar,SidebarContent,SidebarFooter,SidebarGroup,SidebarGroupLabel,SidebarHeader,SidebarMenu,SidebarMenuItem,SidebarMenuButton,SidebarSeparator} from "@/components/ui/sidebar";
 const sections=[
- {title:"Workspace",links:[{name:"Overview",href:"/dashboard",icon:LayoutDashboard},{name:"Quote requests",href:"/dashboard/quotes",icon:ClipboardList},{name:"Bookings & dispatch",href:"/dashboard/bookings",icon:Truck},{name:"Shipments",href:"/dashboard/shipments",icon:PackageCheck}]}
+ {title:"Workspace",links:[{name:"Overview",href:"/dashboard",icon:LayoutDashboard},{name:"Quote requests",href:"/dashboard/quotes",icon:ClipboardList},{name:"Bookings & dispatch",href:"/dashboard/bookings",icon:Truck},{name:"Shipments",href:"/dashboard/shipments",icon:PackageCheck},{name:"Route planning",href:"/dashboard/routes",icon:MapPinned}]}
 ];
-const future=[{name:"Customers",icon:Users},{name:"Routes & live tracking",icon:MapPinned},{name:"Finance",icon:Receipt},{name:"Advanced analytics",icon:BarChart3},{name:"Settings",icon:Settings2}];
+const future=[{name:"Customers",icon:Users},{name:"Finance",icon:Receipt},{name:"Advanced analytics",icon:BarChart3},{name:"Settings",icon:Settings2}];
 export function CrmSidebar(){
  const path=usePathname();
  return <Sidebar collapsible="icon" variant="sidebar" className="border-r border-sidebar-border">
