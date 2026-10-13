@@ -17,9 +17,10 @@ export type OperationsRow={
  origin:string;destination:string;related_reference:string;
  status:string;created_at:string;
 };
-type Props={kind:"bookings"|"shipments";records:OperationsRow[];page:number;pages:number;total:number;query:string;status:string;sort:string;pageSize:number};
+type Props={kind:"bookings"|"shipments"|"quotes";records:OperationsRow[];page:number;pages:number;total:number;query:string;status:string;sort:string;pageSize:number};
 function csvEscape(value:string){return '"'+value.replaceAll('"','""')+'"';}
 const statusOptions={
+ quotes:[{value:"ALL",label:"All quotations"},{value:"NEW",label:"New"},{value:"REVIEWING",label:"Reviewing"},{value:"PRICED",label:"Priced"},{value:"SENT",label:"Sent"},{value:"ACCEPTED",label:"Accepted"},{value:"DECLINED",label:"Declined"},{value:"EXPIRED",label:"Expired"}],
  bookings:[{value:"ALL",label:"All bookings"},{value:"PENDING",label:"Pending"},{value:"CONFIRMED",label:"Confirmed"},{value:"CANCELLED",label:"Cancelled"}],
  shipments:[{value:"ALL",label:"All shipments"},{value:"SCHEDULED",label:"Scheduled"},{value:"PICKED_UP",label:"Picked up"},{value:"IN_TRANSIT",label:"In transit"},{value:"OUT_FOR_DELIVERY",label:"Out for delivery"},{value:"EXCEPTION",label:"Exception"},{value:"DELIVERED",label:"Delivered"},{value:"RETURNED",label:"Returned"},{value:"CANCELLED",label:"Cancelled"}]
 };
@@ -70,14 +71,14 @@ export function OperationsRegister({kind,records,page,pages,total,query,status,s
  </div>
  <div className="overflow-x-auto"><Table><TableHeader><TableRow>
   <TableHead className="w-10 px-4"><Checkbox aria-label="Select current page" checked={allSelected} onCheckedChange={yes=>setChecked(yes?records.map(x=>x.id):[])}/></TableHead>
-  <TableHead className="px-4">Reference</TableHead><TableHead className="px-4">Customer</TableHead><TableHead className="px-4">Journey</TableHead><TableHead className="px-4">{kind==="bookings"?"Quotation":"Booking"}</TableHead><TableHead className="px-4">Status</TableHead><TableHead className="px-4">Created</TableHead><TableHead className="w-24 px-4 text-right">Actions</TableHead>
+  <TableHead className="px-4">Reference</TableHead><TableHead className="px-4">Customer</TableHead><TableHead className="px-4">Journey</TableHead><TableHead className="px-4">{kind==="bookings"?"Quotation":kind==="shipments"?"Booking":"Service"}</TableHead><TableHead className="px-4">Status</TableHead><TableHead className="px-4">Created</TableHead><TableHead className="w-24 px-4 text-right">Actions</TableHead>
  </TableRow></TableHeader><TableBody>{records.length?records.map(r=><TableRow key={r.id} data-state={checked.includes(r.id)?"selected":undefined}>
  <TableCell className="px-4"><Checkbox aria-label={"Select "+r.reference} checked={checked.includes(r.id)} onCheckedChange={yes=>setChecked(prev=>yes?[...prev,r.id]:prev.filter(x=>x!==r.id))}/></TableCell>
  <TableCell className="px-4"><Link className="font-semibold text-foreground hover:text-primary hover:underline" href={"/dashboard/"+kind+"/"+r.id}>{r.reference}</Link></TableCell>
  <TableCell className="px-4"><div className="min-w-32"><p className="font-medium">{r.customer}</p><p className="max-w-44 truncate text-xs text-muted-foreground">{r.company||"Individual account"}</p></div></TableCell>
  <TableCell className="max-w-60 truncate px-4 text-muted-foreground" title={r.origin+" to "+r.destination}>{r.origin} → {r.destination}</TableCell>
  <TableCell className="px-4 text-muted-foreground">{r.related_reference}</TableCell>
- <TableCell className="px-4"><Badge variant={r.status==="EXCEPTION"||r.status==="CANCELLED"?"destructive":r.status==="CONFIRMED"||r.status==="DELIVERED"?"default":"secondary"}>{r.status.replaceAll("_"," ")}</Badge></TableCell>
+ <TableCell className="px-4"><Badge variant={r.status==="EXCEPTION"||r.status==="CANCELLED"?"destructive":r.status==="CONFIRMED"||r.status==="DELIVERED"||r.status==="ACCEPTED"?"default":"secondary"}>{r.status.replaceAll("_"," ")}</Badge></TableCell>
  <TableCell className="whitespace-nowrap px-4 text-muted-foreground">{new Date(r.created_at).toLocaleDateString("en-ZA",{day:"2-digit",month:"short",year:"numeric"})}</TableCell>
  <TableCell className="px-4 text-right"><DropdownMenu><DropdownMenuTrigger render={<Button size="icon-sm" variant="ghost" aria-label={"Actions for "+r.reference}/> }><MoreHorizontal className="size-4"/></DropdownMenuTrigger><DropdownMenuContent align="end"><DropdownMenuItem render={<Link href={"/dashboard/"+kind+"/"+r.id}/>}>Open record <ExternalLink className="ml-auto size-4"/></DropdownMenuItem><DropdownMenuItem onClick={()=>{void navigator.clipboard.writeText(r.reference);toast.success("Reference copied");}}>Copy reference <Copy className="ml-auto size-4"/></DropdownMenuItem></DropdownMenuContent></DropdownMenu></TableCell>
  </TableRow>):<TableRow><TableCell colSpan={8} className="h-48 text-center"><div className="space-y-2"><p className="font-medium">No matching records</p><p className="text-sm text-muted-foreground">Try another search or clear the filters.</p><Button size="sm" variant="outline" onClick={()=>{setSearch("");navigate("","ALL","newest",1);}}>Clear filters</Button></div></TableCell></TableRow>}</TableBody></Table></div>
