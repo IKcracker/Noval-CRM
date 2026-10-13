@@ -17,7 +17,7 @@ jobs:
       - name: Install existing dependencies
         run: npm ci
       - name: Install official shadcn components
-        run: npx --yes shadcn@latest add card input textarea label badge table select dialog dropdown-menu sheet separator skeleton sonner tabs tooltip popover checkbox alert-dialog -y -o
+        run: npx --yes shadcn@latest add card input textarea label badge table select dialog dropdown-menu sheet separator skeleton sonner tabs tooltip popover checkbox alert-dialog chart sidebar pagination field -y -o
       - name: Install enterprise table and chart dependencies
         run: npm install @tanstack/react-table recharts lucide-react
       - name: Commit generated components
