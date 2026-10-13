@@ -27,6 +27,6 @@ export function SiteFooter(){
    <div><p className="mb-6 text-xs font-bold uppercase tracking-[.19em] text-[#fb7757]">Explore</p><div className="grid gap-4 text-sm text-white/70"><Link href="/#solutions">Our solutions</Link><Link href="/#advantage">Why Noval</Link><Link href="/#process">How it works</Link></div></div>
    <div><p className="mb-6 text-xs font-bold uppercase tracking-[.19em] text-[#fb7757]">Your shipment</p><div className="grid gap-4 text-sm text-white/70"><Link href="/quote">Request a quote</Link><Link href="/track">Track shipment</Link></div></div>
   </div>
-  <div className="flex flex-wrap justify-between gap-5 pt-7 text-xs text-white/45"><span>© 2026 Noval Logistics. All rights reserved.</span><span>Freight and delivery coordination · South Africa</span></div>
+  <div className="flex flex-wrap justify-between gap-5 pt-7 text-xs text-white/45"><span>© 2026 Noval Logistics. All rights reserved.</span><span>Freight and delivery coordination · South Africa</span><Link href="/dashboard" className="hover:text-white">Staff dashboard ↗</Link></div>
  </div></footer>;
 }
