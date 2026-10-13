@@ -26,7 +26,7 @@ export async function POST(req:Request){
      q.contact_name,lower(trim(q.email)),NULLIF(trim(q.phone),''),
      CASE WHEN q.status='ACCEPTED' THEN 'ACTIVE' ELSE 'PROSPECT' END
     FROM quote_requests q WHERE q.reference NOT LIKE 'DEMO-Q%'
-     AND q.email IS NOT NULL AND trim(q.email)~*'^[^[:space:]@]+@[^[:space:]@]+\\.[^[:space:]@]+$'
+     AND q.email IS NOT NULL AND position('@' IN trim(q.email))>1 AND position('.' IN split_part(trim(q.email),'@',2))>0
      AND length(trim(q.contact_name))>=2
     ORDER BY lower(q.email),q.created_at DESC
     ON CONFLICT DO NOTHING RETURNING id`;
@@ -39,7 +39,8 @@ export async function POST(req:Request){
   return NextResponse.json({ok:true,id:rows[0].id},{status:201});
  }catch(e){
   if(e instanceof Error&&"code" in e&&e.code==="23505")return NextResponse.json({error:"A customer with this email already exists."},{status:409});
-  return NextResponse.json({error:e instanceof Error&&e.message.startsWith("Enter")||e instanceof Error&&e.message==="Invalid customer details."?e.message:"Customer operation failed. Apply migration 005."},{status:400});
+  if(e instanceof Error&&(e.message.startsWith("Enter")||e.message==="Invalid customer details."))return NextResponse.json({error:e.message},{status:400});
+  return NextResponse.json({error:"Customer operation failed. Verify the database migration and try again."},{status:503});
  }
 }
 export async function PATCH(req:Request){
