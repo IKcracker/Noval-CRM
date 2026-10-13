@@ -5,8 +5,6 @@ Configure a **dedicated development Neon database** in `.env.local`:
 ```dotenv
 DATABASE_URL=postgresql://USER:PASSWORD@YOUR-DEV-HOST.neon.tech/noval_dev?sslmode=require
 DEMO_DATA_ENABLED=true
-DEMO_DATABASE_NAME=noval_dev
-DEMO_NEON_HOST=YOUR-DEV-HOST.neon.tech
 ```
 
 Use the exact development host and database name from your Neon connection string. Keep credentials secret and never commit `.env.local`.
@@ -25,6 +23,6 @@ npm run clear:demo                          # removes only deterministic sample 
 
 `data:migrate` maintains a `_noval_migrations` table and rejects changes to a migration file after it was applied. Initial migrations already deployed manually can be re-run due to their idempotent definitions.
 
-Demo commands require explicit environment flags and a matching Neon development host/database. They never insert into production automatically.
+Demo commands require DEMO_DATA_ENABLED=true and read the Neon host/database directly from DATABASE_URL. Use only a disposable Neon branch, never your production database. They never insert into production automatically.
 
 **Important:** Run migrations first. The seed SQL is stored at `db/seed_demo.sql`. Demo loading and deletion are not part of app startup or deploy. They must be explicitly run from the terminal.
