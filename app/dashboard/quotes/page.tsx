@@ -2,7 +2,7 @@ import Link from "next/link";
 import {redirect} from "next/navigation";
 import {db} from "@/lib/db";
 import {isAdmin} from "@/lib/admin-auth";
-import {Card,CardHeader,CardTitle,CardDescription,CardContent} from "@/components/ui/card";
+import {Card,CardHeader,CardDescription,CardContent} from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {ArrowUpRight,FileText,ClipboardCheck,Clock3} from "lucide-react";
