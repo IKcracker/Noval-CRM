@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
-import {ClipboardList,Truck,Users,MapPinned,LayoutDashboard,PackageCheck} from "lucide-react";
+import {ClipboardList,Truck,Users,MapPinned,LayoutDashboard,PackageCheck,ContactRound} from "lucide-react";
 import {LogoutButton} from "@/components/admin/logout-button";
 import {Sidebar,SidebarContent,SidebarFooter,SidebarGroup,SidebarGroupLabel,SidebarHeader,SidebarMenu,SidebarMenuItem,SidebarMenuButton,SidebarSeparator} from "@/components/ui/sidebar";
 const sections=[
- {title:"Workspace",links:[{name:"Overview",href:"/dashboard",icon:LayoutDashboard},{name:"Quote requests",href:"/dashboard/quotes",icon:ClipboardList},{name:"Bookings & dispatch",href:"/dashboard/bookings",icon:Truck},{name:"Shipments",href:"/dashboard/shipments",icon:PackageCheck},{name:"Route planning",href:"/dashboard/routes",icon:MapPinned},{name:"Drivers & fleet",href:"/dashboard/fleet",icon:Users}]}
+ {title:"Workspace",links:[{name:"Overview",href:"/dashboard",icon:LayoutDashboard},{name:"Customers",href:"/dashboard/customers",icon:ContactRound},{name:"Quote requests",href:"/dashboard/quotes",icon:ClipboardList},{name:"Bookings & dispatch",href:"/dashboard/bookings",icon:Truck},{name:"Shipments",href:"/dashboard/shipments",icon:PackageCheck},{name:"Route planning",href:"/dashboard/routes",icon:MapPinned},{name:"Drivers & fleet",href:"/dashboard/fleet",icon:Users}]}
 ];
 export function CrmSidebar(){
  const path=usePathname();
