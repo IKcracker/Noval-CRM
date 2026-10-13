@@ -1,0 +1,33 @@
+name: Import fleet photography assets
+on:
+  push:
+    branches: [fix/real-truck-photography]
+permissions:
+  contents: write
+jobs:
+  cache:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download licensed fleet stock photos
+        run: |
+          set -eu
+          mkdir -p public/fleet
+          curl -fSL --retry 3 --max-time 45 'https://images.pexels.com/photos/28158703/pexels-photo-28158703.jpeg?auto=compress&cs=tinysrgb&w=1100' -o public/fleet/truck-box.jpg
+          curl -fSL --retry 3 --max-time 45 'https://images.pexels.com/photos/11777628/pexels-photo-11777628.jpeg?auto=compress&cs=tinysrgb&w=1100' -o public/fleet/truck-semi.jpg
+          curl -fSL --retry 3 --max-time 45 'https://images.pexels.com/photos/6407433/pexels-photo-6407433.jpeg?auto=compress&cs=tinysrgb&w=1100' -o public/fleet/cargo-van.jpg
+          file public/fleet/*.jpg
+          for path in public/fleet/*.jpg; do
+            [ "$(file --brief --mime-type "$path")" = "image/jpeg" ] || exit 1
+            [ "$(wc -c < "$path")" -gt 10000 ] || exit 1
+          done
+      - name: Commit local assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/fleet/
+          if ! git diff --cached --quiet; then
+            git commit -m 'assets: add licensed truck and van photography'
+            git push origin HEAD:fix/real-truck-photography
+          fi
