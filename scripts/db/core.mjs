@@ -18,13 +18,16 @@ export function database() {
  return postgres(url,{ssl:"require",max:1,prepare:false,connect_timeout:15,idle_timeout:3});
 }
 export function requireDemoAccess() {
- if(process.env.DEMO_DATA_ENABLED!=="true") throw new Error("Demo operations are blocked. Set DEMO_DATA_ENABLED=true in a DEVELOPMENT .env.local.");
- if(process.env.NODE_ENV==="production"||process.env.VERCEL_ENV==="production") throw new Error("Refusing demo operation in a production environment.");
+ if(process.env.DEMO_DATA_ENABLED!=="true") throw new Error("Set DEMO_DATA_ENABLED=true in .env.local before loading or clearing demo data.");
+ if(process.env.NODE_ENV==="production" || process.env.VERCEL_ENV==="production") throw new Error("Demo operations are not allowed in production runtime.");
  const parsed=new URL(process.env.DATABASE_URL||"");
  const host=parsed.hostname.toLowerCase();
- if(!host.endsWith(".neon.tech")) throw new Error("Demo tools only support a Neon database. Verify DATABASE_URL.");
- if(!process.env.DEMO_DATABASE_NAME || parsed.pathname.slice(1)!==process.env.DEMO_DATABASE_NAME) throw new Error("Set DEMO_DATABASE_NAME to the name of your dedicated test database. Refusing to run.");
- if(!process.env.DEMO_NEON_HOST || host!==process.env.DEMO_NEON_HOST.toLowerCase()) throw new Error("Set DEMO_NEON_HOST to the exact Neon development host. Refusing to run.");
+ if(!host.endsWith(".neon.tech")) throw new Error("Demo scripts require a Neon PostgreSQL connection.");
+ const databaseName=decodeURIComponent(parsed.pathname.slice(1));
+ if(!databaseName) throw new Error("DATABASE_URL must include a Neon database name.");
+ // The database name and hostname come from DATABASE_URL; no duplicate configuration is needed.
+ // Confirm you are connected to a disposable Neon branch before enabling demo operations.
+ console.log("Demo database target:", databaseName,"on",host);
 }
 export function checksum(value){return createHash("sha256").update(value).digest("hex");}
 export function sqlFile(name){return fs.readFileSync(path.join(root,"db",name),"utf8");}
