@@ -4,7 +4,7 @@ import {Search,Truck,CalendarClock,ChevronRight} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {VehicleThumbnail} from "@/components/admin/vehicle-thumbnail";
+import {VehicleThumbnail,guessVehicleType} from "@/components/admin/vehicle-thumbnail";
 export type VehicleRecord={id:string;registration:string;make_model:string;capacity_kg:string;roadworthy_expiry:string;status:string};
 export function FleetGallery({vehicles,onUpdate,busy}:{vehicles:VehicleRecord[];onUpdate:(kind:string,id:string,status:string)=>void;busy:boolean}){
  const [query,setQuery]=useState(""),[status,setStatus]=useState("ALL");
@@ -17,7 +17,7 @@ export function FleetGallery({vehicles,onUpdate,busy}:{vehicles:VehicleRecord[];
    </div>
   </div>
   {filtered.length?<div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">{filtered.map(v=><article className="group min-w-0 overflow-hidden rounded-xl border border-border bg-card shadow-[0_2px_10px_rgba(20,48,92,.03)] transition-all hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg" key={v.id}>
-    <div className="relative"><VehicleThumbnail className="h-40 rounded-none border-0"/><Badge className="absolute left-3 top-3 bg-white/95 text-[10px] shadow-sm" variant={v.status==="OUT_OF_SERVICE"?"destructive":"secondary"}>{v.status.replaceAll("_"," ")}</Badge></div>
+    <div className="relative"><VehicleThumbnail type={guessVehicleType(v.make_model)} className="h-40 rounded-none border-0"/><Badge className="absolute left-3 top-3 bg-white/95 text-[10px] shadow-sm" variant={v.status==="OUT_OF_SERVICE"?"destructive":"secondary"}>{v.status.replaceAll("_"," ")}</Badge></div>
     <div className="space-y-3 p-4"><div><p className="flex items-center justify-between text-[16px] font-bold tracking-tight">{v.registration}<ChevronRight className="size-4 text-muted-foreground"/></p><p className="mt-1 truncate text-xs text-muted-foreground">{v.make_model}</p></div>
     <div className="grid grid-cols-2 gap-3 border-t pt-3 text-[11px]"><div><p className="text-muted-foreground">Maximum payload</p><p className="mt-1 font-semibold">{Number(v.capacity_kg).toLocaleString("en-ZA")} kg</p></div><div><p className="flex items-center gap-1 text-muted-foreground"><CalendarClock className="size-3"/> Roadworthy until</p><p className="mt-1 font-semibold">{v.roadworthy_expiry}</p></div></div>
     <div className="flex gap-2">{v.status!=="VERIFIED"&&<Button size="sm" className="flex-1" disabled={busy} onClick={()=>onUpdate("vehicle",v.id,"VERIFIED")}>Verify</Button>}{v.status!=="OUT_OF_SERVICE"&&<Button size="sm" variant="outline" className="flex-1" disabled={busy} onClick={()=>onUpdate("vehicle",v.id,"OUT_OF_SERVICE")}>Mark inactive</Button>}{v.status==="OUT_OF_SERVICE"&&<span className="w-full rounded-lg bg-muted px-3 py-2 text-center text-xs text-muted-foreground">Vehicle not dispatchable</span>}</div>
