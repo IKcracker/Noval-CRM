@@ -1,10 +1,84 @@
 "use client";
+
 import Link from "next/link";
-import {useMemo,useState} from "react";
-type Item={id:string;reference:string;contact_name:string;company:string|null;email:string;origin:string;destination:string;status:string;service_type:string;created_at:string};
-export function QuoteTable({rows}:{rows:Item[]}){
- const [search,setSearch]=useState(""),[status,setStatus]=useState("ALL"),[sort,setSort]=useState<"latest"|"oldest">("latest"),[page,setPage]=useState(1);
- const filtered=useMemo(()=>rows.filter(r=>(status==="ALL"||r.status===status)&&[r.reference,r.contact_name,r.company,r.email,r.origin,r.destination,r.service_type].some(x=>(x||"").toLowerCase().includes(search.toLowerCase()))).sort((a,b)=>sort==="latest"?new Date(b.created_at).getTime()-new Date(a.created_at).getTime():new Date(a.created_at).getTime()-new Date(b.created_at).getTime()),[rows,search,status,sort]);
- const pageSize=12,totalPages=Math.max(1,Math.ceil(filtered.length/pageSize)),current=Math.min(page,totalPages),slice=filtered.slice((current-1)*pageSize,current*pageSize);
- return <div><div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 p-6"><div><h2 className="text-lg font-bold">Quotation pipeline</h2><p className="mt-1 text-xs text-slate-500">{filtered.length} of {rows.length} recent enquiries</p></div><div className="flex flex-wrap gap-2"><input aria-label="Search quotations" placeholder="Search customer, route, reference..." value={search} onChange={e=>{setSearch(e.target.value);setPage(1)}} className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm outline-none focus:border-cyan-700 sm:w-64"/><select aria-label="Filter status" value={status} onChange={e=>{setStatus(e.target.value);setPage(1)}} className="rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="ALL">All statuses</option>{["NEW","REVIEWING","PRICED","SENT","ACCEPTED","DECLINED","EXPIRED"].map(s=><option key={s}>{s}</option>)}</select><select aria-label="Sort quotations" value={sort} onChange={e=>{setSort(e.target.value as "latest"|"oldest");setPage(1)}} className="rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="latest">Newest first</option><option value="oldest">Oldest first</option></select></div></div>{slice.length===0?<p className="p-12 text-center text-sm text-slate-500">No quotations match your filters.</p>:<div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500"><tr>{["Reference","Customer","Route","Service","Received","Status",""].map((h,i)=><th key={i} className="px-5 py-4">{h}</th>)}</tr></thead><tbody>{slice.map(r=><tr key={r.id} className="border-t border-slate-100 hover:bg-slate-50/70"><td className="whitespace-nowrap px-5 py-4 font-bold">{r.reference}</td><td className="px-5 py-4"><div className="font-semibold">{r.contact_name}</div><div className="mt-1 text-xs text-slate-500">{r.company||r.email}</div></td><td className="max-w-[230px] px-5 py-4">{r.origin} → {r.destination}</td><td className="whitespace-nowrap px-5 py-4">{r.service_type}</td><td className="whitespace-nowrap px-5 py-4">{new Date(r.created_at).toLocaleDateString("en-ZA")}</td><td className="px-5 py-4"><span className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-bold text-cyan-900">{r.status}</span></td><td className="px-5 py-4"><Link className="whitespace-nowrap font-bold text-[#1688a2]" href={"/dashboard/quotes/"+r.id}>Review →</Link></td></tr>)}</tbody></table></div>}<div className="flex items-center justify-between border-t border-slate-100 px-6 py-4 text-xs text-slate-500"><span>Page {current} of {totalPages}</span><div className="flex gap-2"><button className="rounded-lg border px-3 py-2 disabled:opacity-30" disabled={current===1} onClick={()=>setPage(current-1)}>Previous</button><button className="rounded-lg border px-3 py-2 disabled:opacity-30" disabled={current===totalPages} onClick={()=>setPage(current+1)}>Next</button></div></div></div>;
+import { useMemo, useState } from "react";
+import {
+  type ColumnDef, type SortingState, type VisibilityState,
+  type RowSelectionState, flexRender, getCoreRowModel,
+  getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable,
+} from "@tanstack/react-table";
+import { ArrowUpDown, ChevronLeft, ChevronRight, Columns3, Search, SlidersHorizontal } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
+type Item = {
+ id:string; reference:string; contact_name:string; company:string|null; email:string;
+ origin:string; destination:string; status:string; service_type:string; created_at:string;
+};
+
+const statuses = ["NEW","REVIEWING","PRICED","SENT","ACCEPTED","DECLINED","EXPIRED"];
+function statusVariant(value:string): "secondary"|"default"|"destructive"|"outline" {
+ if(value==="ACCEPTED")return "default";
+ if(value==="DECLINED"||value==="EXPIRED")return "destructive";
+ if(value==="NEW")return "secondary";
+ return "outline";
+}
+const columns:ColumnDef<Item>[] = [
+ { id:"select", header:({table})=><Checkbox aria-label="Select all quotes on page" checked={table.getIsAllPageRowsSelected()} onCheckedChange={v=>table.toggleAllPageRowsSelected(Boolean(v))}/>, cell:({row})=><Checkbox aria-label={"Select "+row.original.reference} checked={row.getIsSelected()} onCheckedChange={v=>row.toggleSelected(Boolean(v))}/>, enableSorting:false,enableHiding:false },
+ { accessorKey:"reference", header:({column})=><Button variant="ghost" size="sm" onClick={()=>column.toggleSorting(column.getIsSorted()==="asc")}>Reference <ArrowUpDown className="ml-1 size-3.5"/></Button>, cell:({row})=><Link className="font-semibold text-primary hover:underline" href={"/dashboard/quotes/"+row.original.id}>{row.original.reference}</Link> },
+ { accessorKey:"contact_name", header:({column})=><Button variant="ghost" size="sm" onClick={()=>column.toggleSorting(column.getIsSorted()==="asc")}>Customer <ArrowUpDown className="ml-1 size-3.5"/></Button>,cell:({row})=><div className="min-w-36"><p className="font-medium">{row.original.contact_name}</p><p className="max-w-44 truncate text-xs text-muted-foreground">{row.original.company||row.original.email}</p></div> },
+ { id:"route", accessorFn:row=>row.origin+" → "+row.destination, header:"Shipping route", cell:({row})=><div className="max-w-56 truncate text-muted-foreground" title={row.original.origin+" → "+row.original.destination}>{row.original.origin} → {row.original.destination}</div> },
+ { accessorKey:"service_type",header:"Service" },
+ { accessorKey:"created_at",header:({column})=><Button variant="ghost" size="sm" onClick={()=>column.toggleSorting(column.getIsSorted()==="asc")}>Received <ArrowUpDown className="ml-1 size-3.5"/></Button>,cell:({row})=><span className="text-muted-foreground">{new Date(row.original.created_at).toLocaleDateString("en-ZA")}</span> },
+ { accessorKey:"status",header:"Status",cell:({row})=><Badge variant={statusVariant(row.original.status)}>{row.original.status.replaceAll("_"," ")}</Badge> },
+ { id:"actions",enableSorting:false,enableHiding:false,cell:({row})=><Button size="sm" variant="outline" render={<Link href={"/dashboard/quotes/"+row.original.id}/>}>Review →</Button> },
+];
+
+export function QuoteTable({rows}:{rows:Item[]}) {
+ const [query,setQuery]=useState("");
+ const [status,setStatus]=useState("ALL");
+ const [sorting,setSorting]=useState<SortingState>([{id:"created_at",desc:true}]);
+ const [visibility,setVisibility]=useState<VisibilityState>({});
+ const [selection,setSelection]=useState<RowSelectionState>({});
+ const filtered=useMemo(()=>rows.filter(r=>(status==="ALL"||r.status===status)&&
+   [r.reference,r.contact_name,r.company,r.email,r.origin,r.destination,r.service_type].some(v=>(v||"").toLowerCase().includes(query.toLowerCase().trim()))),[rows,query,status]);
+ const table=useReactTable({
+  data:filtered,columns,getRowId:row=>row.id,
+  state:{sorting,columnVisibility:visibility,rowSelection:selection},
+  onSortingChange:setSorting,onColumnVisibilityChange:setVisibility,onRowSelectionChange:setSelection,
+  getCoreRowModel:getCoreRowModel(),getSortedRowModel:getSortedRowModel(),getFilteredRowModel:getFilteredRowModel(),getPaginationRowModel:getPaginationRowModel(),
+  initialState:{pagination:{pageSize:10}},
+ });
+ const selected=table.getSelectedRowModel().rows.map(r=>r.original);
+ return <div className="space-y-0">
+  <div className="flex flex-wrap items-center justify-between gap-4 p-5">
+   <div><h2 className="text-lg font-semibold tracking-tight">Quotation pipeline</h2><p className="mt-1 text-xs text-muted-foreground">Review, qualify and price incoming freight enquiries</p></div>
+   <Badge variant="secondary">{filtered.length} records</Badge>
+  </div>
+  <div className="flex flex-wrap items-center gap-2 border-y border-border px-5 py-3">
+   <div className="relative min-w-44 flex-1 sm:max-w-sm"><Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"/><Input aria-label="Search quotations" value={query} onChange={e=>{setQuery(e.target.value);table.setPageIndex(0)}} placeholder="Search quotes, customers, routes..." className="h-9 pl-9"/></div>
+   <Select value={status} onValueChange={v=>{setStatus(v??"ALL");table.setPageIndex(0)}}>
+    <SelectTrigger aria-label="Filter by status" className="h-9 min-w-40"><SlidersHorizontal className="size-4"/><SelectValue/></SelectTrigger>
+    <SelectContent><SelectItem value="ALL">All statuses</SelectItem>{statuses.map(s=><SelectItem key={s} value={s}>{s.replaceAll("_"," ")}</SelectItem>)}</SelectContent>
+   </Select>
+   <DropdownMenu>
+    <DropdownMenuTrigger render={<Button variant="outline" size="sm"/>}><Columns3 className="size-4"/> Columns</DropdownMenuTrigger>
+    <DropdownMenuContent align="end"><DropdownMenuLabel>Visible columns</DropdownMenuLabel>{table.getAllLeafColumns().filter(c=>c.getCanHide()).map(c=><DropdownMenuCheckboxItem key={c.id} checked={c.getIsVisible()} onCheckedChange={v=>c.toggleVisibility(Boolean(v))}>{c.id.replaceAll("_"," ")}</DropdownMenuCheckboxItem>)}</DropdownMenuContent>
+   </DropdownMenu>
+   {selected.length>0&&<Button variant="outline" size="sm" onClick={()=>{const csv=["Reference,Customer,Email,Status",...selected.map(x=>[x.reference,x.contact_name,x.email,x.status].map(v=>'"'+v.replaceAll('"','""')+'"').join(","))].join("\n");const blob=new Blob([csv],{type:"text/csv"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="noval-selected-quotes.csv";a.click();URL.revokeObjectURL(url)}}>Export {selected.length} selected</Button>}
+  </div>
+  <Table>
+   <TableHeader>{table.getHeaderGroups().map(group=><TableRow key={group.id}>{group.headers.map(header=><TableHead key={header.id} className="px-4 py-3">{header.isPlaceholder?null:flexRender(header.column.columnDef.header,header.getContext())}</TableHead>)}</TableRow>)}</TableHeader>
+   <TableBody>{table.getRowModel().rows.length ? table.getRowModel().rows.map(row=><TableRow key={row.id} data-state={row.getIsSelected()?"selected":undefined}>{row.getVisibleCells().map(cell=><TableCell key={cell.id} className="px-4 py-3">{flexRender(cell.column.columnDef.cell,cell.getContext())}</TableCell>)}</TableRow>):<TableRow><TableCell colSpan={table.getVisibleLeafColumns().length} className="h-28 text-center text-muted-foreground">No quote requests match your filters.</TableCell></TableRow>}</TableBody>
+  </Table>
+  <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 text-xs text-muted-foreground">
+   <span>{table.getFilteredSelectedRowModel().rows.length} selected · {filtered.length} results</span>
+   <div className="flex items-center gap-3"><span>Page {table.getState().pagination.pageIndex+1} of {Math.max(1,table.getPageCount())}</span><Button size="sm" variant="outline" aria-label="Previous page" disabled={!table.getCanPreviousPage()} onClick={()=>table.previousPage()}><ChevronLeft/></Button><Button size="sm" variant="outline" aria-label="Next page" disabled={!table.getCanNextPage()} onClick={()=>table.nextPage()}><ChevronRight/></Button></div>
+  </div>
+ </div>;
 }
