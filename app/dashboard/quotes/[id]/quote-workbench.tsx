@@ -5,7 +5,6 @@ import {useState,type FormEvent} from "react";
 import {toast} from "sonner";
 import {ArrowRight,CheckCircle2,Info,Send,ShieldCheck} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {Badge} from "@/components/ui/badge";
 import {Card,CardContent,CardDescription,CardHeader,CardTitle} from "@/components/ui/card";
 import {Field,FieldLabel,FieldDescription} from "@/components/ui/field";
 import {Input} from "@/components/ui/input";
@@ -33,12 +32,12 @@ export function QuoteWorkbench({id,status}:{id:string;status:string}){
  }
  const update=(next:string)=>request(base,{status:next,note},"PATCH");
  const price=(e:FormEvent)=>{e.preventDefault();void request(base+"/pricing",{amount,note});};
- return <Card className="shadow-sm">
-  <CardHeader className="border-b pb-4"><div className="flex items-center justify-between"><CardTitle className="text-lg">Quotation actions</CardTitle><Badge variant="outline">{status}</Badge></div><CardDescription>Progress through review, pricing and customer approval.</CardDescription></CardHeader>
-  <CardContent className="space-y-5">
+ return <Card className="gap-0 rounded-2xl py-0">
+  <CardHeader className="px-5 pb-4 pt-5"><CardTitle className="text-[15px] font-semibold">Next step</CardTitle><CardDescription className="text-[12px]">Progress through review, pricing and customer approval.</CardDescription></CardHeader>
+  <CardContent className="space-y-4 px-5 pb-5">
    <div className="flex gap-3 rounded-lg bg-secondary/70 p-3 text-xs leading-5 text-muted-foreground"><Info className="mt-0.5 size-4 shrink-0"/>Quote sending and acceptance are recorded manually. Automatic emails are not yet enabled.</div>
    {error&&<p role="alert" className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</p>}
-   {booking&&<Button variant="outline" className="w-full" render={<Link href={"/dashboard/bookings/"+booking}/>}>Open created booking <ArrowRight/></Button>}
+   {booking&&<Button nativeButton={false} variant="outline" className="w-full" render={<Link href={"/dashboard/bookings/"+booking}/>}>Open created booking <ArrowRight/></Button>}
    {status==="NEW"&&<Button className="w-full" disabled={busy} onClick={()=>update("REVIEWING")}>Start review <ArrowRight className="size-4"/></Button>}
    {status==="REVIEWING"&&<form onSubmit={price} className="space-y-4">
     <Field><FieldLabel htmlFor="quote-amount">Quoted total (ZAR)</FieldLabel><Input className="h-10" id="quote-amount" type="number" min=".01" max="999999999" step=".01" required placeholder="4500.00" value={amount} onChange={e=>setAmount(e.target.value)}/></Field>

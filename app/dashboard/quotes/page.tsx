@@ -45,7 +45,7 @@ export default async function QuotesPage({searchParams}:{searchParams:Promise<Ra
    LIMIT ${PAGE_SIZE} OFFSET ${offset}` as QuoteRow[];
  }catch{error="Unable to load quotations. Verify Neon connectivity and the migrations.";}
  return <main className="mx-auto max-w-[1680px] space-y-5 p-4 md:p-7 lg:p-8">
- <header className="flex flex-wrap items-end justify-between gap-4"><div className="space-y-1"><Badge variant="secondary">Sales / Quotation pipeline</Badge><h1 className="text-3xl font-semibold tracking-tight">Quote requests</h1><p className="text-sm text-muted-foreground">Qualify, price and track every freight quotation request.</p></div><Button variant="outline" render={<Link href="/dashboard/bookings"/>}>Dispatch bookings <ArrowUpRight className="size-4"/></Button></header>
+ <header className="flex flex-wrap items-end justify-between gap-4"><div className="space-y-1"><Badge variant="secondary">Sales / Quotation pipeline</Badge><h1 className="text-3xl font-semibold tracking-tight">Quote requests</h1><p className="text-sm text-muted-foreground">Qualify, price and track every freight quotation request.</p></div><Button nativeButton={false} variant="outline" render={<Link href="/dashboard/bookings"/>}>Dispatch bookings <ArrowUpRight className="size-4"/></Button></header>
  <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Quote metrics">{[
  {label:"All enquiries",value:stats.total,icon:FileText},
  {label:"Needs review",value:stats.awaiting,icon:Clock3},

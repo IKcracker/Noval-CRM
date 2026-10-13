@@ -13,6 +13,9 @@ function Tabs({
     <TabsPrimitive.Root
       data-slot="tabs"
       data-orientation={orientation}
+      // Base UI only emits data-orientation; the classes below use data-horizontal/data-vertical.
+      data-horizontal={orientation==="horizontal"?"":undefined}
+      data-vertical={orientation==="vertical"?"":undefined}
       className={cn(
         "group/tabs flex gap-2 data-horizontal:flex-col",
         className

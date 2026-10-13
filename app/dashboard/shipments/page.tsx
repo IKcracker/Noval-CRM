@@ -48,7 +48,7 @@ export default async function Shipments({searchParams}:{searchParams:Promise<Raw
     LIMIT ${PAGE_SIZE} OFFSET ${offset}` as ShipmentRow[];
  }catch{error="Unable to retrieve shipments. Verify Neon and migration 003.";}
  return <main className="mx-auto max-w-[1680px] space-y-5 p-4 md:p-7 lg:p-8">
-  <header className="flex flex-wrap items-end justify-between gap-4"><div className="space-y-1"><Badge variant="secondary">Transport / Consignments</Badge><h1 className="text-3xl font-semibold tracking-tight">Shipment operations</h1><p className="text-sm text-muted-foreground">Monitor your full shipment register, delivery status and operational exceptions.</p></div><Button variant="outline" render={<Link href="/dashboard/routes"/>}>Route planning <ArrowUpRight className="size-4"/></Button></header>
+  <header className="flex flex-wrap items-end justify-between gap-4"><div className="space-y-1"><Badge variant="secondary">Transport / Consignments</Badge><h1 className="text-3xl font-semibold tracking-tight">Shipment operations</h1><p className="text-sm text-muted-foreground">Monitor your full shipment register, delivery status and operational exceptions.</p></div><Button nativeButton={false} variant="outline" render={<Link href="/dashboard/routes"/>}>Route planning <ArrowUpRight className="size-4"/></Button></header>
   <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Shipment metrics">{[
    {label:"Total shipments",value:stats.total,icon:PackageCheck},
    {label:"In movement",value:stats.moving,icon:Truck},

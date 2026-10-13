@@ -36,7 +36,7 @@ const columns:ColumnDef<Item>[] = [
  { accessorKey:"service_type",header:"Service" },
  { accessorKey:"created_at",header:({column})=><Button variant="ghost" size="sm" onClick={()=>column.toggleSorting(column.getIsSorted()==="asc")}>Received <ArrowUpDown className="ml-1 size-3.5"/></Button>,cell:({row})=><span className="text-muted-foreground">{new Date(row.original.created_at).toLocaleDateString("en-ZA")}</span> },
  { accessorKey:"status",header:"Status",cell:({row})=><Badge variant={statusVariant(row.original.status)}>{row.original.status.replaceAll("_"," ")}</Badge> },
- { id:"actions",enableSorting:false,enableHiding:false,cell:({row})=><Button size="sm" variant="outline" render={<Link href={"/dashboard/quotes/"+row.original.id}/>}>Review →</Button> },
+ { id:"actions",enableSorting:false,enableHiding:false,cell:({row})=><Button nativeButton={false} size="sm" variant="outline" render={<Link href={"/dashboard/quotes/"+row.original.id}/>}>Review →</Button> },
 ];
 
 export function QuoteTable({rows}:{rows:Item[]}) {

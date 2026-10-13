@@ -24,3 +24,10 @@ This UI iteration translates the two provided logistics dashboard references int
 - Confirm accessibility: keyboard navigation, focus states, contrast, empty/loading/error states.
 - Run `npm run lint` and `npm run build`.
 - This UI upgrade does not replace planned RBAC, multi-user authentication, real vehicle photos, telemetry, auditing, rate-limiting or compliance checks.
+
+## Green warehouse workspace (iteration 2)
+- CRM tokens switched to a green logistics palette (`app/globals.css`); sidebar now has search (Ctrl/⌘ K → shipments), an active-item accent bar and an enquiry card. Header shows the page title, Refresh, quick filters, notifications, profile menu and **Quick shipment**.
+- New **Warehouse operations** page (`/dashboard/warehouse`): overview KPIs and a grid/list of vehicles on confirmed trips whose shipment is still `SCHEDULED`, plus vehicles dispatched today.
+- Migration `007_warehouse_loading.sql` adds `loading_dock`, `loaded_kg`, `loading_status` and `loading_updated_at` to `trips`. Staff record these via **Update loading**; progress is loaded weight against booked cargo weight (or vehicle capacity if no booked weight). Nothing is inferred from telemetry.
+- `PATCH /api/admin/warehouse/[tripId]` enforces dock range (`WAREHOUSE_DOCK_COUNT`), one active vehicle per dock, vehicle capacity and status rules, and writes an internal (non-customer-visible) shipment event on status changes.
+- **Dispatch vehicle** records the existing `PICKED_UP` shipment milestone, which removes the vehicle from the queue and frees its dock.

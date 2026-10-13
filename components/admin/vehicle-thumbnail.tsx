@@ -4,7 +4,7 @@ import Image from "next/image";
 import {useState} from "react";
 import {Truck} from "lucide-react";
 
-export type VehicleType="box-truck"|"semi-truck"|"cargo-van";
+import type {VehicleType} from "@/lib/vehicle-type";
 
 const photographs:Record<VehicleType,{src:string;description:string}>={
  "box-truck":{
@@ -21,18 +21,10 @@ const photographs:Record<VehicleType,{src:string;description:string}>={
  }
 };
 
-/** Choose an illustrative category; this is not proof of the actual vehicle type. */
-export function guessVehicleType(model?:string|null):VehicleType{
- const text=(model||"").toLowerCase();
- if(/van|sprinter|transit|hiace|quantum|crafter|ducato|panel/.test(text))return "cargo-van";
- if(/semi|tractor|articulated|horse|scania|actros|volvo|superlink|interlink/.test(text))return "semi-truck";
- return "box-truck";
-}
-
 function VehiclePhoto({src,description}: {src:string;description:string}){
  const [failed,setFailed]=useState(false);
  return failed
-  ? <div className="flex h-full min-h-18 w-full flex-col items-center justify-center gap-1 bg-gradient-to-br from-slate-50 to-blue-50 text-slate-400" role="img" aria-label="Vehicle image unavailable">
+  ? <div className="flex h-full min-h-18 w-full flex-col items-center justify-center gap-1 bg-gradient-to-br from-slate-50 to-emerald-50 text-slate-400" role="img" aria-label="Vehicle image unavailable">
       <Truck className="size-9"/><span className="text-[10px]">Photo unavailable</span>
     </div>
   : <Image src={src} alt={"Representative stock photograph: "+description} fill
@@ -48,7 +40,7 @@ export function VehicleThumbnail({className="",type="box-truck",imageSrc}:{
  const photo=photographs[type];
  const custom=imageSrc?.startsWith("/")&&!imageSrc.startsWith("//")?imageSrc:null;
  const src=custom||photo.src;
- return <div className={"relative isolate overflow-hidden rounded-xl border border-border bg-[#f2f5fa] "+className}>
+ return <div className={"relative isolate overflow-hidden rounded-xl border border-border bg-[#f4f6f5] "+className}>
   <VehiclePhoto key={src} src={src} description={custom?"Vehicle":photo.description}/>
  </div>;
 }

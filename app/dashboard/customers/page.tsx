@@ -42,7 +42,7 @@ export default async function Customers({searchParams}:{searchParams:Promise<Raw
  }catch{error="Customer records are unavailable. Apply db/005_customer_workspace.sql with npm run data:migrate.";}
  return <main className="mx-auto max-w-[1680px] space-y-5 p-4 md:p-7 lg:p-8">
  <header className="flex flex-wrap items-end justify-between gap-4"><div className="space-y-1"><Badge variant="secondary">CRM / Relationships</Badge><h1 className="text-3xl font-semibold tracking-tight">Customers</h1><p className="text-sm text-muted-foreground">Manage client contacts and follow their quotation and shipment history.</p></div>
- <Button render={<Link href="/dashboard/customers/new"/>}><UserRoundPlus className="size-4"/> New customer <ArrowUpRight className="size-4"/></Button></header>
+ <Button nativeButton={false} render={<Link href="/dashboard/customers/new"/>}><UserRoundPlus className="size-4"/> New customer <ArrowUpRight className="size-4"/></Button></header>
  <section className="grid gap-3 sm:grid-cols-3" aria-label="Customer metrics">{[
   {label:"Total customers",value:metrics.total,icon:Users},{label:"Active accounts",value:metrics.active,icon:UserCheck},{label:"Prospects",value:metrics.prospects,icon:UserRoundPlus}
  ].map(({label,value,icon:Icon})=><Card key={label}><CardHeader className="flex flex-row items-center justify-between pb-0"><CardDescription>{label}</CardDescription><Icon className="size-4 text-muted-foreground"/></CardHeader><CardContent><p className="text-3xl font-semibold tabular-nums">{value}</p></CardContent></Card>)}</section>

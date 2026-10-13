@@ -35,44 +35,46 @@ html { scroll-behavior:smooth; }
 body { background:var(--background); color:var(--foreground); font-family:Arial,Helvetica,sans-serif; }
 
 
-/* Premium operations shell. These tokens are scoped to the CRM,
-   so public marketing pages keep their existing visual identity. */
+/* Premium operations shell (green logistics workspace). Tokens are scoped
+   to the CRM so public marketing pages keep their own visual identity. */
 :root:has(.noval-enterprise), .noval-enterprise {
- --radius: .9rem;
- --background: #f5f7fb;
- --foreground: #19243a;
+ --radius: .75rem;
+ --background: #f4f6f5;
+ --foreground: #111a15;
  --card: #ffffff;
- --card-foreground: #19243a;
+ --card-foreground: #111a15;
  --popover: #ffffff;
- --popover-foreground: #19243a;
- --primary: #2563eb;
+ --popover-foreground: #111a15;
+ --primary: #16a34a;
  --primary-foreground: #ffffff;
- --secondary: #eef3ff;
- --secondary-foreground: #274e9d;
- --muted: #f1f4f9;
- --muted-foreground: #778397;
- --accent: #edf3ff;
- --accent-foreground: #1b3d80;
- --destructive: #dc505d;
- --border: #e6ebf3;
- --input: #e1e7f0;
- --ring: #94b8ff;
- --chart-1: #397af6; --chart-2:#37bba0; --chart-3:#a0bdf7; --chart-4:#f2b85a; --chart-5:#8493b2;
+ --secondary: #eef7f1;
+ --secondary-foreground: #166534;
+ --muted: #f2f5f3;
+ --muted-foreground: #6b7770;
+ --accent: #ecf7f0;
+ --accent-foreground: #14532d;
+ --destructive: #dc4c4c;
+ --border: #e5eae7;
+ --input: #e0e6e2;
+ --ring: #86d6a4;
+ --chart-1: #16a34a; --chart-2:#0f766e; --chart-3:#86d6a4; --chart-4:#f59e0b; --chart-5:#94a39a;
  --sidebar: #ffffff;
- --sidebar-foreground: #35425b;
- --sidebar-primary: #2563eb;
+ --sidebar-foreground: #2d3a33;
+ --sidebar-primary: #16a34a;
  --sidebar-primary-foreground: #ffffff;
- --sidebar-accent: #ebf2ff;
- --sidebar-accent-foreground: #1850be;
- --sidebar-border: #e9edf5;
- --sidebar-ring: #b0cbff;
+ --sidebar-accent: #ecf7f0;
+ --sidebar-accent-foreground: #15803d;
+ --sidebar-border: #e8ece9;
+ --sidebar-ring: #86d6a4;
  background: var(--background);
  color: var(--foreground);
  font-family: Inter, "Segoe UI", Arial, sans-serif;
 }
 .noval-enterprise [data-slot="card"] {
- box-shadow: 0 2px 12px rgba(28,47,93,.025), 0 1px 2px rgba(28,47,93,.025);
+ box-shadow: 0 1px 2px rgba(17,26,21,.03), 0 4px 16px rgba(17,26,21,.025);
 }
 .noval-enterprise [data-slot="sidebar"] { font-family: inherit; }
 .noval-enterprise [data-slot="sidebar-menu-button"][data-active="true"] { font-weight: 600; }
-.noval-enterprise .premium-grid { background-image: radial-gradient(#dde6f5 0.8px, transparent 0.8px); background-size: 15px 15px; }
+.noval-enterprise .premium-grid { background-image: radial-gradient(#dbe5df 0.8px, transparent 0.8px); background-size: 15px 15px; }
+/* Dialogs, sheets and menus are portalled to <body>, outside .noval-enterprise. */
+:root:has(.noval-enterprise) body { font-family: Inter, "Segoe UI", Arial, sans-serif; }

@@ -23,12 +23,12 @@ export function CustomerForm({initial}:{initial?:CustomerEditable}){
   }catch(e){toast.error(e instanceof Error?e.message:"Unable to save contact");}
   finally{setBusy(false);}
  }
- return <Card><CardHeader><CardTitle>{initial?"Edit customer record":"Create a customer"}</CardTitle><CardDescription>Maintain verified contact and company details used by your operations team.</CardDescription></CardHeader><CardContent><form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
+ return <Card className="gap-0 rounded-2xl py-0"><CardHeader className="px-5 pb-4 pt-5"><CardTitle className="text-[15px] font-semibold">{initial?"Edit customer record":"Create a customer"}</CardTitle><CardDescription className="text-[12px]">Maintain verified contact and company details used by your operations team.</CardDescription></CardHeader><CardContent className="px-5 pb-5"><form onSubmit={submit} className={initial?"flex flex-col gap-4":"grid gap-4 sm:grid-cols-2"}>
  <Field><FieldLabel htmlFor="contactName">Contact name</FieldLabel><Input id="contactName" required name="contactName" maxLength={160} defaultValue={initial?.contact_name}/></Field>
  <Field><FieldLabel htmlFor="companyName">Company</FieldLabel><Input id="companyName" name="companyName" maxLength={180} defaultValue={initial?.company_name||""}/></Field>
  <Field><FieldLabel htmlFor="email">Email</FieldLabel><Input id="email" required type="email" name="email" maxLength={255} defaultValue={initial?.email}/></Field>
  <Field><FieldLabel htmlFor="phone">Telephone</FieldLabel><Input id="phone" type="tel" name="phone" maxLength={45} defaultValue={initial?.phone||""}/></Field>
- <Field><FieldLabel>Status</FieldLabel><Select value={status} onValueChange={v=>setStatus(v??"PROSPECT")}><SelectTrigger className="w-full"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="PROSPECT">Prospect</SelectItem><SelectItem value="ACTIVE">Active</SelectItem><SelectItem value="INACTIVE">Inactive</SelectItem></SelectContent></Select></Field>
+ <Field><FieldLabel>Status</FieldLabel><Select items={{PROSPECT:"Prospect",ACTIVE:"Active",INACTIVE:"Inactive"}} value={status} onValueChange={v=>setStatus(v??"PROSPECT")}><SelectTrigger className="w-full"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="PROSPECT">Prospect</SelectItem><SelectItem value="ACTIVE">Active</SelectItem><SelectItem value="INACTIVE">Inactive</SelectItem></SelectContent></Select></Field>
  <Field className="sm:col-span-2"><FieldLabel htmlFor="billingAddress">Billing address</FieldLabel><Textarea id="billingAddress" name="billingAddress" rows={3} maxLength={1500} defaultValue={initial?.billing_address||""}/></Field>
  <div className="sm:col-span-2"><Button disabled={busy} type="submit">{busy?"Saving...":initial?"Save changes":"Create customer"}</Button></div>
  </form></CardContent></Card>;
