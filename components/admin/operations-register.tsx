@@ -2,14 +2,14 @@
 import {useState, type FormEvent} from "react";
 import Link from "next/link";
 import {usePathname,useRouter} from "next/navigation";
-import {ArrowDown,ArrowUp,ArrowUpDown,ChevronLeft,ChevronRight,Download,ExternalLink,Search,MoreHorizontal,Copy,RotateCcw} from "lucide-react";
+import {ArrowUpDown,ChevronLeft,ChevronRight,Download,ExternalLink,Search,MoreHorizontal,Copy,RotateCcw,Columns3} from "lucide-react";
 import {toast} from "sonner";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Badge} from "@/components/ui/badge";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Select,SelectTrigger,SelectValue,SelectContent,SelectItem} from "@/components/ui/select";
-import {DropdownMenu,DropdownMenuTrigger,DropdownMenuContent,DropdownMenuItem} from "@/components/ui/dropdown-menu";
+import {DropdownMenu,DropdownMenuTrigger,DropdownMenuContent,DropdownMenuItem,DropdownMenuCheckboxItem,DropdownMenuLabel} from "@/components/ui/dropdown-menu";
 import {Table,TableHeader,TableHead,TableBody,TableRow,TableCell} from "@/components/ui/table";
 
 export type OperationsRow={
@@ -28,6 +28,8 @@ const sorts=[{value:"newest",label:"Newest first"},{value:"oldest",label:"Oldest
 export function OperationsRegister({kind,records,page,pages,total,query,status,sort,pageSize}:Props){
  const router=useRouter(),pathname=usePathname(),[search,setSearch]=useState(query);
  const [checked,setChecked]=useState<string[]>([]);
+ const [visible,setVisible]=useState({journey:true,related:true,created:true});
+ const columnCount=5+Object.values(visible).filter(Boolean).length;
  const selected=records.filter(r=>checked.includes(r.id));
  const allSelected=records.length>0&&selected.length===records.length;
  function url(q:string,s:string,o:string,p:number){
@@ -67,21 +69,22 @@ export function OperationsRegister({kind,records,page,pages,total,query,status,s
    <SelectContent>{sorts.map(x=><SelectItem value={x.value} key={x.value}>{x.label}</SelectItem>)}</SelectContent>
   </Select>
   {(query||status!=="ALL"||sort!=="newest")&&<Button size="sm" variant="ghost" onClick={()=>{setSearch("");navigate("","ALL","newest",1);}}><RotateCcw className="size-4"/> Reset</Button>}
+  <DropdownMenu><DropdownMenuTrigger render={<Button size="sm" variant="outline"/>}><Columns3 className="size-4"/> Columns</DropdownMenuTrigger><DropdownMenuContent align="end"><DropdownMenuLabel>Visible columns</DropdownMenuLabel>{([{key:"journey",label:"Journey"},{key:"related",label:kind==="quotes"?"Service":kind==="bookings"?"Quotation":"Booking"},{key:"created",label:"Created"}] as const).map(col=><DropdownMenuCheckboxItem key={col.key} checked={visible[col.key]} onCheckedChange={checked=>setVisible(prev=>({...prev,[col.key]:Boolean(checked)}))}>{col.label}</DropdownMenuCheckboxItem>)}</DropdownMenuContent></DropdownMenu>
   <Button size="sm" variant="outline" disabled={!selected.length} onClick={exportSelected}><Download className="size-4"/> Export {selected.length?selected.length:"selected"}</Button>
  </div>
  <div className="overflow-x-auto"><Table><TableHeader><TableRow>
   <TableHead className="w-10 px-4"><Checkbox aria-label="Select current page" checked={allSelected} onCheckedChange={yes=>setChecked(yes?records.map(x=>x.id):[])}/></TableHead>
-  <TableHead className="px-4">Reference</TableHead><TableHead className="px-4">Customer</TableHead><TableHead className="px-4">Journey</TableHead><TableHead className="px-4">{kind==="bookings"?"Quotation":kind==="shipments"?"Booking":"Service"}</TableHead><TableHead className="px-4">Status</TableHead><TableHead className="px-4">Created</TableHead><TableHead className="w-24 px-4 text-right">Actions</TableHead>
+  <TableHead className="px-4">Reference</TableHead><TableHead className="px-4">Customer</TableHead>{visible.journey&&<TableHead className="px-4">Journey</TableHead>}{visible.related&&<TableHead className="px-4">{kind==="bookings"?"Quotation":kind==="shipments"?"Booking":"Service"}</TableHead>}<TableHead className="px-4">Status</TableHead>{visible.created&&<TableHead className="px-4">Created</TableHead>}<TableHead className="w-24 px-4 text-right">Actions</TableHead>
  </TableRow></TableHeader><TableBody>{records.length?records.map(r=><TableRow key={r.id} data-state={checked.includes(r.id)?"selected":undefined}>
  <TableCell className="px-4"><Checkbox aria-label={"Select "+r.reference} checked={checked.includes(r.id)} onCheckedChange={yes=>setChecked(prev=>yes?[...prev,r.id]:prev.filter(x=>x!==r.id))}/></TableCell>
  <TableCell className="px-4"><Link className="font-semibold text-foreground hover:text-primary hover:underline" href={"/dashboard/"+kind+"/"+r.id}>{r.reference}</Link></TableCell>
  <TableCell className="px-4"><div className="min-w-32"><p className="font-medium">{r.customer}</p><p className="max-w-44 truncate text-xs text-muted-foreground">{r.company||"Individual account"}</p></div></TableCell>
- <TableCell className="max-w-60 truncate px-4 text-muted-foreground" title={r.origin+" to "+r.destination}>{r.origin} → {r.destination}</TableCell>
- <TableCell className="px-4 text-muted-foreground">{r.related_reference}</TableCell>
+ {visible.journey&&<TableCell className="max-w-60 truncate px-4 text-muted-foreground" title={r.origin+" to "+r.destination}>{r.origin} → {r.destination}</TableCell>}
+ {visible.related&&<TableCell className="px-4 text-muted-foreground">{r.related_reference}</TableCell>}
  <TableCell className="px-4"><Badge variant={r.status==="EXCEPTION"||r.status==="CANCELLED"?"destructive":r.status==="CONFIRMED"||r.status==="DELIVERED"||r.status==="ACCEPTED"?"default":"secondary"}>{r.status.replaceAll("_"," ")}</Badge></TableCell>
- <TableCell className="whitespace-nowrap px-4 text-muted-foreground">{new Date(r.created_at).toLocaleDateString("en-ZA",{day:"2-digit",month:"short",year:"numeric"})}</TableCell>
+ {visible.created&&<TableCell className="whitespace-nowrap px-4 text-muted-foreground">{new Date(r.created_at).toLocaleDateString("en-ZA",{day:"2-digit",month:"short",year:"numeric"})}</TableCell>}
  <TableCell className="px-4 text-right"><DropdownMenu><DropdownMenuTrigger render={<Button size="icon-sm" variant="ghost" aria-label={"Actions for "+r.reference}/> }><MoreHorizontal className="size-4"/></DropdownMenuTrigger><DropdownMenuContent align="end"><DropdownMenuItem render={<Link href={"/dashboard/"+kind+"/"+r.id}/>}>Open record <ExternalLink className="ml-auto size-4"/></DropdownMenuItem><DropdownMenuItem onClick={()=>{void navigator.clipboard.writeText(r.reference);toast.success("Reference copied");}}>Copy reference <Copy className="ml-auto size-4"/></DropdownMenuItem></DropdownMenuContent></DropdownMenu></TableCell>
- </TableRow>):<TableRow><TableCell colSpan={8} className="h-48 text-center"><div className="space-y-2"><p className="font-medium">No matching records</p><p className="text-sm text-muted-foreground">Try another search or clear the filters.</p><Button size="sm" variant="outline" onClick={()=>{setSearch("");navigate("","ALL","newest",1);}}>Clear filters</Button></div></TableCell></TableRow>}</TableBody></Table></div>
+ </TableRow>):<TableRow><TableCell colSpan={columnCount} className="h-48 text-center"><div className="space-y-2"><p className="font-medium">No matching records</p><p className="text-sm text-muted-foreground">Try another search or clear the filters.</p><Button size="sm" variant="outline" onClick={()=>{setSearch("");navigate("","ALL","newest",1);}}>Clear filters</Button></div></TableCell></TableRow>}</TableBody></Table></div>
  <div className="flex flex-wrap items-center justify-between gap-3 border-t px-4 py-3 text-xs text-muted-foreground md:px-5">
  <div><span className="font-medium text-foreground">{total.toLocaleString("en-ZA")}</span> matching records · {selected.length} selected on this page · {pageSize} per page</div>
  <div className="flex items-center gap-2"><span className="mr-2">Page {page} of {pages}</span><Button size="icon-sm" variant="outline" disabled={page<=1} onClick={()=>navigate(query,status,sort,page-1)} aria-label="Previous page"><ChevronLeft className="size-4"/></Button><Button size="icon-sm" variant="outline" disabled={page>=pages} onClick={()=>navigate(query,status,sort,page+1)} aria-label="Next page"><ChevronRight className="size-4"/></Button></div>
