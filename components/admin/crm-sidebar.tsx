@@ -1,10 +1,9 @@
 "use client";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
-import {BarChart3,ClipboardList,Truck,Users,MapPinned,Receipt,Settings2,LayoutDashboard,PackageCheck,PanelLeft} from "lucide-react";
+import {BarChart3,ClipboardList,Truck,Users,MapPinned,Receipt,Settings2,LayoutDashboard,PackageCheck} from "lucide-react";
 import {LogoutButton} from "@/components/admin/logout-button";
 import {Badge} from "@/components/ui/badge";
-import {Separator} from "@/components/ui/separator";
 import {Sidebar,SidebarContent,SidebarFooter,SidebarGroup,SidebarGroupLabel,SidebarHeader,SidebarMenu,SidebarMenuItem,SidebarMenuButton,SidebarSeparator} from "@/components/ui/sidebar";
 const sections=[
  {title:"Workspace",links:[{name:"Overview",href:"/dashboard",icon:LayoutDashboard},{name:"Quote requests",href:"/dashboard/quotes",icon:ClipboardList},{name:"Bookings & dispatch",href:"/dashboard/bookings",icon:Truck}]}
