@@ -1,17 +1,11 @@
-# Route planning setup
+# Free OpenStreetMap route overview
 
-Operator route planning is available at `/dashboard/routes`. It reads **confirmed trip assignments** from Neon.
+The route planning page at `/dashboard/routes` now embeds **OpenStreetMap** without a Google Maps key or paid map account.
 
-To enable an embedded map, activate the Google Maps Embed API on a Google Cloud project, create a browser-restricted API key and enable billing as applicable. Add the key in server environment variables:
+The embedded map shows an approximate geographic overview for supported South African city names. It is **not** the calculated road route and does not display live GPS. Select **Plan driving route** to open OpenStreetMap directions in a new tab, where road routing is handled by the directions service.
 
-```
-GOOGLE_MAPS_EMBED_API_KEY=your_api_key_here
-```
+The locations are approximate city centres, not collection/delivery addresses. Unsupported or ambiguous locations show a fallback message; add geocoding and a suitable routing service if precise address-to-address route geometry and ETA are required.
 
-Restart the Next.js development server or redeploy. The page falls back to an external directions link when the key is absent.
+OpenStreetMap data contributors must be credited. Its public embedded map and directions services are community infrastructure with usage limits and no production SLA. If traffic grows, use a compliant tile/routing provider or self-hosted services. See https://operations.osmfoundation.org/policies/tiles/ .
 
-**Security:** Restrict the key by the application's allowed HTTP referrers, restrict the API key to **Maps Embed API only**, and apply billing quotas. Maps Embed API iframe requests transmit the key to Google in the iframe URL, so do not consider the key secret.
-
-This first iteration uses the quote's origin and destination as place labels. It does not geocode pickup and delivery addresses, optimize multi-stop routes, calculate verified ETA, or display vehicle GPS. The displayed route is **planned driving directions**, not a real-time driver location. Live GPS requires a separate, consent-aware driver-position integration.
-
-To test route planning after Neon migrations, run `npm run load:demo` on the development branch (if necessary).
+No API key is needed for this first stage. Live vehicle tracking still requires driver consent and a positioning integration.
