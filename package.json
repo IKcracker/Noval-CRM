@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "data:generate": "node scripts/db/generate.mjs",
+    "data:migrate": "node scripts/db/migrate.mjs",
+    "load:demo": "node scripts/db/load-demo.mjs",
+    "clear:demo": "node scripts/db/clear-demo.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -22,7 +26,8 @@
     "react-dom": "19.3.0",
     "recharts": "^3.10.1",
     "sonner": "^2.0.8",
-    "tailwind-merge": "^3.3.0"
+    "tailwind-merge": "^3.3.0",
+    "postgres": "^3.4.7"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
