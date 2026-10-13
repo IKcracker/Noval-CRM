@@ -7,7 +7,7 @@ import {
   type RowSelectionState, flexRender, getCoreRowModel,
   getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable,
 } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight, Columns3, Search, SlidersHorizontal } from "lucide-react";
+import { ArrowUpDown, ChevronLeft, ChevronRight, Columns3, Search, SlidersHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
