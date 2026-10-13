@@ -1,20 +1,59 @@
+"use client";
+
+import Image from "next/image";
+import {useState} from "react";
 import {Truck} from "lucide-react";
-export function VehicleThumbnail({className=""}:{className?:string}){
- return <div className={"relative flex items-center justify-center overflow-hidden rounded-xl border border-[#e8edf6] bg-gradient-to-br from-[#f5f8fc] via-white to-[#ebf2fb] "+className}>
- <svg viewBox="0 0 260 110" className="h-full max-h-28 w-full" role="img" aria-label="Illustrated freight vehicle" xmlns="http://www.w3.org/2000/svg">
-  <defs><linearGradient id="noval-trailer" x1="0" x2="1"><stop offset="0" stopColor="#e7edf5"/><stop offset=".5" stopColor="#ffffff"/><stop offset="1" stopColor="#d6e0ed"/></linearGradient><linearGradient id="noval-cab" x1="0" x2="1"><stop stopColor="#d8e4f1"/><stop offset=".52" stopColor="#fff"/><stop offset="1" stopColor="#aec3d8"/></linearGradient></defs>
-  <ellipse cx="136" cy="91" rx="111" ry="7" fill="#c7d5e7" opacity=".45"/>
-  <rect x="102" y="23" width="141" height="57" rx="3" fill="url(#noval-trailer)" stroke="#a8bbcf" strokeWidth="1.5"/>
-  <rect x="109" y="28" width="3" height="47" rx="1" fill="#d3deed"/><rect x="235" y="28" width="3" height="47" rx="1" fill="#bacbdc"/>
-  <rect x="101" y="75" width="146" height="6" rx="2" fill="#465a70"/>
-  <path d="M24 52 L34 36 Q36 33 44 33 H86 Q92 33 95 40 L99 53 L101 78 H23 V59 Q23 54 24 52 Z" fill="url(#noval-cab)" stroke="#90a7bc" strokeWidth="1.5"/>
-  <path d="M39 38 H80 Q85 38 87 43 L91 53 H35 Z" fill="#6886a3"/><path d="M61 38 V53" stroke="#d8e7f5" strokeWidth="2"/>
-  <path d="M22 69 H101 V80 H22 Z" fill="#f6f8fb"/><rect x="22" y="77" width="81" height="6" rx="2" fill="#53677c"/>
-  <rect x="26" y="60" width="7" height="5" rx="2" fill="#e8ac63"/><rect x="91" y="59" width="7" height="4" rx="1" fill="#85a6c7"/>
-  <circle cx="55" cy="83" r="12" fill="#253442"/><circle cx="55" cy="83" r="5.5" fill="#a1b4c8"/><circle cx="192" cy="83" r="12" fill="#253442"/><circle cx="192" cy="83" r="5.5" fill="#a1b4c8"/>
-  <circle cx="214" cy="83" r="12" fill="#253442"/><circle cx="214" cy="83" r="5.5" fill="#a1b4c8"/>
-  <rect x="67" y="61" width="19" height="4" rx="2" fill="#8aa4bf" opacity=".5"/>
- </svg>
- <span className="sr-only"><Truck className="size-4"/> Vehicle illustration, not an actual vehicle photo</span>
+
+export type VehicleType="box-truck"|"semi-truck"|"cargo-van";
+
+const imageSources:Record<VehicleType,{local:string;remote:string;label:string}>={
+ "box-truck":{
+  local:"/fleet/truck-box.jpg",
+  remote:"https://images.pexels.com/photos/31049388/pexels-photo-31049388.jpeg?auto=compress&cs=tinysrgb&w=1000",
+  label:"Box delivery truck"
+ },
+ "semi-truck":{
+  local:"/fleet/truck-semi.jpg",
+  remote:"https://images.pexels.com/photos/11777628/pexels-photo-11777628.jpeg?auto=compress&cs=tinysrgb&w=1000",
+  label:"Heavy goods truck"
+ },
+ "cargo-van":{
+  local:"/fleet/cargo-van.jpg",
+  remote:"https://images.pexels.com/photos/11040957/pexels-photo-11040957.jpeg?auto=compress&cs=tinysrgb&w=1000",
+  label:"Cargo delivery van"
+ }
+};
+
+export function guessVehicleType(model?:string|null):VehicleType{
+ const value=(model||"").toLowerCase();
+ if(/(van|sprinter|transit|hiace|quantum|crafter|ducato|panel)/.test(value))return "cargo-van";
+ if(/(semi|tractor|articulated|heavy|horse|scania|actros|fh\d|volvo|superlink|interlink)/.test(value))return "semi-truck";
+ return "box-truck";
+}
+
+/** Representative stock photo, not a verified photo of this specific vehicle. */
+export function VehicleThumbnail({className="",type="box-truck",imageSrc}:{
+ className?:string;type?:VehicleType;imageSrc?:string|null
+}){
+ const defaults=imageSources[type];
+ const provided=imageSrc?.startsWith("/")==true||
+  imageSrc?.startsWith("https://images.pexels.com/")==true?imageSrc:null;
+ const initial=provided||defaults.local;
+ const [failed,setFailed]=useState<string|null>(null);
+ const [lastAttempt,setLastAttempt]=useState("");
+ const source=lastAttempt!==initial?initial:failed===initial?defaults.remote:failed===defaults.remote?null:initial;
+ // Reset the fallback decision naturally when the selected source changes.
+ const displaySource=source;
+ return <div className={"relative isolate overflow-hidden rounded-xl border border-border bg-[#f2f5fa] "+className}>
+  {displaySource?<Image
+   key={displaySource}
+   src={displaySource}
+   alt={"Representative "+defaults.label.toLowerCase()+" photograph"}
+   fill
+   sizes="(max-width: 640px) 44vw, (max-width: 1280px) 25vw, 320px"
+   className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.025]"
+   onError={()=>{setLastAttempt(initial);setFailed(displaySource);}}
+  />:<div className="flex h-full min-h-18 w-full items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 text-slate-400" role="img" aria-label="Vehicle photo unavailable"><Truck className="size-10"/></div>}
+  <span className="pointer-events-none absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950/20 to-transparent p-2 text-[0px]" aria-hidden="true">Photo</span>
  </div>;
 }
