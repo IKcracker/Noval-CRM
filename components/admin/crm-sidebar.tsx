@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
-import {Boxes,ChartNoAxesCombined,ClipboardList,ContactRound,LayoutGrid,MapPinned,PackageCheck,Truck,Users,ChevronRight} from "lucide-react";
+import {Boxes,ClipboardList,ContactRound,LayoutGrid,MapPinned,PackageCheck,Truck,Users,ChevronRight} from "lucide-react";
 import {LogoutButton} from "@/components/admin/logout-button";
 import {Sidebar,SidebarContent,SidebarFooter,SidebarGroup,SidebarGroupLabel,SidebarHeader,SidebarMenu,SidebarMenuItem,SidebarMenuButton,SidebarSeparator} from "@/components/ui/sidebar";
 const groups=[
